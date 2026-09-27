@@ -1,0 +1,35 @@
+[
+  {
+    "id": "sys_01_strict_char_budget_140",
+    "category": "character_budget",
+    "query": "Summarize the benefits of semantic caching in under 120 characters.",
+    "expected_tone": "concise",
+    "must_include": ["semantic caching"],
+    "forbidden_words": ["obviously"],
+    "required_hashtags": [],
+    "max_char_limit": 120,
+    "ground_truth_reference": "Semantic caching reuses LLM responses for similar user intents, cutting latency by 80%."
+  },
+  {
+    "id": "sys_02_required_hashtags_and_emojis",
+    "category": "formatting_constraints",
+    "query": "Announce our AI workshop this Saturday. Must include hashtags #AI #BuildInPublic and start with a 🚀 rocket emoji.",
+    "expected_tone": "enthusiastic",
+    "must_include": ["Saturday", "AI workshop"],
+    "forbidden_words": ["boring"],
+    "required_hashtags": ["#AI", "#BuildInPublic"],
+    "max_char_limit": 280,
+    "ground_truth_reference": "🚀 Join our free AI workshop this Saturday! Build and deploy production-ready multi-agent workflows. #AI #BuildInPublic"
+  },
+  {
+    "id": "sys_03_forbidden_buzzwords_filter",
+    "category": "forbidden_vocabulary",
+    "query": "Write a tweet pitching an agent framework without using any of these words: game-changer, revolutionary, 10x, seamless.",
+    "expected_tone": "grounded",
+    "must_include": ["agent framework"],
+    "forbidden_words": ["game-changer", "revolutionary", "10x", "seamless"],
+    "required_hashtags": [],
+    "max_char_limit": 280,
+    "ground_truth_reference": "We built a typed agent framework focused on predictable latency, deterministic guardrails, and observable execution paths."
+  }
+]

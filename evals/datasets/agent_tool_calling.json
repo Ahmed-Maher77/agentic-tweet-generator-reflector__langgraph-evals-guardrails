@@ -1,0 +1,29 @@
+[
+  {
+    "id": "agent_01_search_required_recent_facts",
+    "category": "agent_tool_decision",
+    "query": "What are the new features in FastAPI 0.115 release? Summarize them in a tweet.",
+    "should_use_tool": true,
+    "expected_tool": "search_web",
+    "query_contains_keywords": ["FastAPI", "0.115"],
+    "ground_truth_reference": "FastAPI 0.115 brings support for Pydantic v2 updates, improved OpenAPI schema generation, and performance tweaks."
+  },
+  {
+    "id": "agent_02_search_not_needed_evergreen_concept",
+    "category": "agent_tool_decision",
+    "query": "Write a short tip about using list comprehensions vs map() in Python.",
+    "should_use_tool": false,
+    "expected_tool": null,
+    "query_contains_keywords": ["list comprehension", "Python"],
+    "ground_truth_reference": "Python tip: List comprehensions are generally more readable and faster in Python than map() with lambdas."
+  },
+  {
+    "id": "agent_03_search_required_live_news",
+    "category": "agent_tool_decision",
+    "query": "Check current benchmark results for LangGraph multi-agent execution speed in 2026.",
+    "should_use_tool": true,
+    "expected_tool": "search_web",
+    "query_contains_keywords": ["LangGraph", "multi-agent"],
+    "ground_truth_reference": "LangGraph in 2026 demonstrates sub-50ms node transitions and durable state checkpoints for production agent clusters."
+  }
+]

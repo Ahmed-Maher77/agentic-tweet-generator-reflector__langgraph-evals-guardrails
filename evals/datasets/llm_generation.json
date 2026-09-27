@@ -1,0 +1,42 @@
+[
+  {
+    "id": "llm_01_tech_announcement",
+    "category": "tech_announcement",
+    "query": "Announce our open-source Python library 'FastGraph' for asynchronous graph neural networks. Highlight that it gives 3x speedups and zero extra dependencies. Include a call to star the repo.",
+    "expected_tone": "technical",
+    "must_include": ["FastGraph", "3x", "Python"],
+    "forbidden_words": ["revolutionary", "magical"],
+    "max_char_limit": 280,
+    "ground_truth_reference": "We just open-sourced FastGraph: an async Graph Neural Network library for Python delivering 3x speedups with zero extra dependencies. Star us on GitHub! ⭐"
+  },
+  {
+    "id": "llm_02_product_launch",
+    "category": "product_launch",
+    "query": "Launch 'CloudPulse': a real-time observability platform for Kubernetes clusters that cuts mean time to resolution (MTTR) by 50%. Invite teams to start a free trial today.",
+    "expected_tone": "exciting",
+    "must_include": ["CloudPulse", "Kubernetes", "MTTR", "free trial"],
+    "forbidden_words": ["best in the world"],
+    "max_char_limit": 280,
+    "ground_truth_reference": "Excited to launch CloudPulse! 🚀 Real-time Kubernetes observability that slashes MTTR by 50% with zero-config eBPF tracing. Start your free trial today: cloudpulse.io"
+  },
+  {
+    "id": "llm_03_educational_explainer",
+    "category": "educational_explainer",
+    "query": "Explain the difference between synchronous and asynchronous I/O in Python in under 200 characters. Keep it clear for beginner developers.",
+    "expected_tone": "informative",
+    "must_include": ["sync", "async", "Python"],
+    "forbidden_words": ["obviously", "super easy"],
+    "max_char_limit": 200,
+    "ground_truth_reference": "Sync I/O in Python blocks execution until tasks complete. Async I/O lets other operations run while waiting on I/O. Think: waiting in line vs a restaurant buzzer."
+  },
+  {
+    "id": "llm_04_viral_hook_thread",
+    "category": "viral_hook_thread",
+    "query": "Write the opening tweet of a thread breaking down the 5 biggest architecture mistakes backend engineers make before scaling to 1M users. End with an enticing hook.",
+    "expected_tone": "engaging",
+    "must_include": ["1M users", "architecture"],
+    "forbidden_words": ["guru", "ninja"],
+    "max_char_limit": 280,
+    "ground_truth_reference": "Most backend architectures collapse before hitting 1M users—not from database load, but from these 5 hidden bottlenecks:\n\nHere is how to avoid them (🧵👇):"
+  }
+]

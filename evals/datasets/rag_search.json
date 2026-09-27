@@ -1,0 +1,41 @@
+[
+  {
+    "id": "rag_01_python_release",
+    "category": "realtime_search_grounding",
+    "query": "Share the latest release date and core features of Python 3.13, specifically mentioning free-threaded mode (no-GIL) and the new JIT compiler.",
+    "expected_tone": "technical",
+    "must_include": ["Python 3.13", "free-threaded", "JIT"],
+    "forbidden_words": [],
+    "max_char_limit": 280,
+    "trusted_context": "Python 3.13 is released in October 2024 (official release date October 7, 2024). Major features include experimental free-threaded CPython (PEP 703 without GIL) and an experimental copy-and-patch basic JIT compiler.",
+    "search_needed": true,
+    "search_query": "Python 3.13 release date free-threaded JIT features",
+    "ground_truth_reference": "Python 3.13 is officially here! 🎉 Highlights:\n• Experimental free-threaded mode (no GIL)\n• Experimental JIT compiler\n• Improved error messages & interactive shell\n\nA huge leap forward for Python performance!"
+  },
+  {
+    "id": "rag_02_deepseek_v3",
+    "category": "realtime_search_grounding",
+    "query": "Summarize the architecture details of DeepSeek-V3 based on its technical report, specifically mentioning total parameters (671B), active parameters per token (37B), and Multi-head Latent Attention (MLA).",
+    "expected_tone": "analytical",
+    "must_include": ["DeepSeek-V3", "671B", "37B", "MLA"],
+    "forbidden_words": [],
+    "max_char_limit": 280,
+    "trusted_context": "DeepSeek-V3 is an open-weights Mixture-of-Experts (MoE) model with 671B total parameters and 37B activated parameters per token. It employs Multi-head Latent Attention (MLA) and DeepSeekMoE architectures.",
+    "search_needed": true,
+    "search_query": "DeepSeek-V3 architecture 671B 37B MLA technical report",
+    "ground_truth_reference": "DeepSeek-V3 architecture breakdown:\n• 671B total parameters (37B active per token)\n• Multi-Head Latent Attention (MLA) for inference efficiency\n• Multi-token prediction training objective\n\nOpen weights pushing the boundaries of MoE efficiency."
+  },
+  {
+    "id": "rag_03_anthropic_computer_use",
+    "category": "realtime_search_grounding",
+    "query": "What is Anthropic's Claude 3.5 Sonnet 'Computer Use' capability? Write a concise update tweet explaining what it allows agents to do.",
+    "expected_tone": "informative",
+    "must_include": ["Claude 3.5 Sonnet", "computer use"],
+    "forbidden_words": ["sentient"],
+    "max_char_limit": 280,
+    "trusted_context": "Anthropic introduced an upgraded Claude 3.5 Sonnet along with Computer Use in public beta, allowing Claude to interact directly with standard computer interfaces (keystrokes, mouse clicks, viewing screens).",
+    "search_needed": true,
+    "search_query": "Anthropic Claude 3.5 Sonnet computer use public beta",
+    "ground_truth_reference": "Anthropic released Computer Use for Claude 3.5 Sonnet in public beta! 💻 Agents can now look at screens, move cursors, click buttons, and type text to automate complex desktop workflows."
+  }
+]

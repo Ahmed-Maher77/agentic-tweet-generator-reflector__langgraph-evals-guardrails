@@ -1,0 +1,35 @@
+[
+  {
+    "id": "wf_01_complex_refinement",
+    "category": "agentic_workflow",
+    "query": "Announce our new vector database 'Turbovex'. Emphasize: HNSW indexing, 100k QPS, zero CPU idle waste, under 180 chars, and no exclamation marks.",
+    "expected_tone": "technical",
+    "must_include": ["Turbovex", "HNSW", "100k QPS"],
+    "forbidden_words": ["!"],
+    "max_char_limit": 180,
+    "ground_truth_reference": "Turbovex vector database is live. Built on SIMD-accelerated HNSW indexing, delivering 100k QPS with zero CPU idle waste.",
+    "evaluation_focus": "multi_pass_reflection"
+  },
+  {
+    "id": "wf_02_negative_constraint_iteration",
+    "category": "agentic_workflow",
+    "query": "Write a tweet explaining why prompt caching saves API cost. Do not use the words 'money', 'expensive', 'cheap', or 'dollars'. Must be under 160 characters.",
+    "expected_tone": "informative",
+    "must_include": ["prompt caching"],
+    "forbidden_words": ["money", "expensive", "cheap", "dollars"],
+    "max_char_limit": 160,
+    "ground_truth_reference": "Prompt caching reuses repeated token prefixes, slashing redundant latency and compute overhead on large context prompts.",
+    "evaluation_focus": "negative_constraint_correction"
+  },
+  {
+    "id": "wf_03_strict_hook_polish",
+    "category": "agentic_workflow",
+    "query": "Craft an engineering leadership tweet on why code reviews should focus on architecture over syntax. Make the first sentence a strong contrarian hook.",
+    "expected_tone": "thought-provoking",
+    "must_include": ["code reviews", "architecture"],
+    "forbidden_words": ["junior", "senior"],
+    "max_char_limit": 280,
+    "ground_truth_reference": "Nitpicking syntax in code reviews is a waste of senior engineering hours.\n\nAutomate formatting with linters and focus human reviews entirely on architecture, data flow, and failure modes.",
+    "evaluation_focus": "quality_score_improvement"
+  }
+]
