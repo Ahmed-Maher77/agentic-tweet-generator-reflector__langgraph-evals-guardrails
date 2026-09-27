@@ -1,0 +1,15 @@
+services:
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - LLM_PROVIDER=${LLM_PROVIDER:-auto}
+      - GROQ_API_KEY=${GROQ_API_KEY}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - OPENAI_API_BASE=${OPENAI_API_BASE}
+      - WRITER_MODEL=${WRITER_MODEL:-openai/gpt-oss-120b}
+      - REVIEWER_MODEL=${REVIEWER_MODEL:-openai/gpt-oss-120b}
+      - SAFETY_MODEL=${SAFETY_MODEL:-openai/gpt-oss-20b}
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+    command: uvicorn app.api.main:app --host 0.0.0.0 --port 8000
