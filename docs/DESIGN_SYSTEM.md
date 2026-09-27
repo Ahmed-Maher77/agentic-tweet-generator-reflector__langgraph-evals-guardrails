@@ -1,6 +1,6 @@
 # AI Tweet Generator — Design System Specification
 
-Welcome to the **Design System** specification for the AI Tweet Generator Assistant. This document captures the visual philosophy, design tokens, typography hierarchies, layout mechanics, component library, and motion guidelines powering the modern **Apple HIG + Developer Minimalist** user interface.
+Welcome to the **Design System** specification for the AI Tweet Generator Assistant. This document captures the visual philosophy, design tokens, typography hierarchies, layout mechanics, component library, logic separation hooks, and accessibility guidelines powering the modern **Apple HIG + Developer Minimalist** user interface.
 
 ---
 
@@ -10,8 +10,9 @@ Welcome to the **Design System** specification for the AI Tweet Generator Assist
 3. [Typography Hierarchy](#3-typography-hierarchy)
 4. [Layout & Grid Architecture](#4-layout--grid-architecture)
 5. [Component Library & Specifications](#5-component-library--specifications)
-6. [Interactive Feedback & Motion](#6-interactive-feedback--motion)
-7. [Accessibility & Ergonomics](#7-accessibility--ergonomics)
+6. [Logic Separation & Custom Hooks Architecture](#6-logic-separation--custom-hooks-architecture)
+7. [Interactive Feedback & Motion](#7-interactive-feedback--motion)
+8. [Accessibility & Ergonomics](#8-accessibility--ergonomics)
 
 ---
 
@@ -98,11 +99,11 @@ The typographic system utilizes modern geometric sans-serif typefaces tailored f
 │ │  .app-sidebar  │ │  .app-main (Ambient Grid + Side Glow)           │ │
 │ │  (260px / 68px)│ │  ┌───────────────────────────────────────────┐  │ │
 │ │                │ │  │ .app-scrollable-content                   │  │ │
-│ │  - Brand Logo  │ │  │                                           │  │ │
+│ │  - SidebarHead │ │  │                                           │  │ │
 │ │  - New Tweet   │ │  │   TypewriterHero (Centered Headline)      │  │ │
-│ │  - Navigation  │ │  │   Agent Pipeline Stepper (Connected Line) │  │ │
-│ │  - History     │ │  │   Inspiration Prompt Tiles                │  │ │
-│ │  - Theme Switch│ │  │   Tweet Showcase & Iteration Timeline    │  │ │
+│ │  - SidebarNav  │ │  │   PipelineStepper (Connected Line)        │  │ │
+│ │  - RecentDrafts│ │  │   InspirationGrid (Prompt Tiles)          │  │ │
+│ │  - SidebarFoot │ │  │   TweetCard & Iteration Timeline          │  │ │
 │ │                │ │  └───────────────────────────────────────────┘  │ │
 │ │                │ │  ┌───────────────────────────────────────────┐  │ │
 │ │                │ │  │ .bottom-chat-wrapper (Sticky Floating Dock│  │ │
@@ -112,89 +113,62 @@ The typographic system utilizes modern geometric sans-serif typefaces tailored f
 └────────────────────────────────────────────────────────────────────────┘
 ```
 
-### 4.1 Master Viewport
-- **`app-layout`**: Full viewport flex wrapper (`height: 100vh; width: 100vw; overflow: hidden;`).
-- **`app-sidebar`**: 
-  - **Expanded**: Width `260px`, full navigation labels, history list, and theme toggler.
-  - **Compressed**: Width `68px`, vertically centered icons, stacked logo and toggle button.
-  - **Mobile**: Fixed drawer (`z-index: 1060`) with smooth sliding transformation.
-- **`app-main`**: Viewport container with multi-layer background (Grid + Ambient Glow).
-- **`app-scrollable-content`**: Scrollable inner view with bottom padding (`padding-bottom: 7rem`) preventing overlap with the floating prompt dock.
-
 ---
 
 ## 5. Component Library & Specifications
 
-### 5.1 Chatbot Bottom Dock (`PromptEditor`)
-- **Structure**: Sticky bottom container with a soft vertical gradient mask.
-- **Input Pill (`.bottom-chat-container`)**:
-  - `max-width: 820px`, `border-radius: 26px`, `min-height: 52px`.
-  - Border: `1.5px solid var(--apple-border)`.
-  - Focus Ring: `border-color: var(--apple-accent); box-shadow: 0 0 0 3px var(--apple-accent-subtle);`.
-- **Send Button (`.apple-btn-circle`)**:
-  - `36px × 36px` fully circular button with high-contrast arrow icon.
-  - Hover physics: `transform: scale(1.04)`.
+### 5.1 Reusable UI Primitives (`frontend/src/components/common/`)
+- **`BrandLogo`**: Standardized Twitter bird SVG icon with an amber AI sparkle badge and responsive brand text.
+- **`StatusBadge`**: Multi-state badge supporting `SUCCESS`, `PASS`, `REVISE`, `MAX_ATTEMPTS_REACHED`, `INPUT_BLOCKED`, `OUTPUT_BLOCKED`, and `SELECTED`.
+- **`Drawer`**: Sliding panel primitive supporting right/left orientation, custom headers/footers, and background backdrop blur.
+- **`Modal`**: Centered dialog primitive with backdrop blur, customizable max-width, and header actions.
+- **`HistoryItem`**: Standardized history entry card with relative timestamps, truncated queries, preview snippets, and delete buttons.
+- **`GuardrailAlert`**: Interception banner for input/output security guardrail blocks.
+- **`MobileTopbar`**: Clean responsive topbar for viewports `< 992px`.
 
-### 5.2 Agent Pipeline Stepper (`HowItWorksCard`)
-- **Track Line (`.stepper-line`)**: Continuous connecting gradient line spanning stages (`opacity: 0.55`).
-- **Step Node (`.stepper-node`)**:
-  - `48px × 48px` circular surface elevated with `box-shadow: 0 4px 12px rgba(0,0,0,0.05)`.
-  - Hover physics: `transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.09);`.
-- **Numbered Badge (`.stepper-badge-num`)**:
-  - `19px × 19px` circular pill positioned at top-right of the node with bold stage number.
-- **3 Stages**:
-  1. **Prompt Input**: Icon `PenLine`, Blue Accent (`--apple-accent`).
-  2. **Reflection Loop**: Icon `Repeat`, Orange Accent (`--apple-warning`).
-  3. **Verified Output**: Icon `ShieldCheck`, Green Accent (`--apple-success`).
-
-### 5.3 Tweet Showcase (`TweetCard`)
-- Authentic social post card featuring:
-  - User avatar with Twitter brand icon + AI sparkle.
-  - Author name, handle (`@TweetStudioAI`), verified check badge.
-  - Monospace character counter (`0 / 280`).
-  - Copy to Clipboard button with toast feedback.
-  - Quick action toolbar: Regeneration, Settings shortcut, Character limit checks.
-
-### 5.4 Iteration Timeline & Metric Score Radars (`Timeline` & `MetricPill`)
-- Visual display of the LangGraph self-correction loop.
-- **Verdict Badges**: `.apple-badge-pass` (Green) and `.apple-badge-revise` (Orange).
-- **Metric Tiles (`.metric-tile`)**:
-  - 5 Rubric Scores: Relevance, Clarity, Professionalism, Engagement, Adherence.
-  - Individual score values with color-coded mini progress bars.
-- **Actionable Feedback Section**: Detailed evaluator suggestions displayed in clean quote callouts.
-
-### 5.5 Settings & History Drawers (`SettingsDrawer` & `HistorySidebar`)
-- Slide-over side sheet with backdrop blur.
-- **Apple Switch Toggle (`.apple-switch`)**: Native iOS style slider switch with smooth sliding thumb (`transform: translateX(20px)`).
-- **Threshold Sliders**: Custom HTML range inputs with real-time percentage indicators.
-
-### 5.6 System Features & Specs Modal (`SystemDetailsModal`)
-- Dialog width: `max-width: 820px`, `border-radius: 20px`.
-- Backdrop: `rgba(0, 0, 0, 0.45)` with `backdrop-filter: blur(4px)`.
-- 4 Architecture Breakdown Sections (Single-Agent Pattern, Reflection Reviewer, Two-Tier Guardrails, Stateful Loop).
-- Real-time Backend Engine Health Status badge (`Online` / `Offline`).
-
-### 5.7 Dynamic Island Toast (`StatusToast`)
-- Centered top pill notification (`.dynamic-island`, `z-index: 2000`).
-- Floating elevation with `box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15)`.
+### 5.2 Focused Presentational Components
+- **`PromptEditor`**: Floating bottom input pill (`.bottom-chat-container`, `max-width: 820px`) with auto-expanding textarea and circular send button (`.apple-btn-circle`).
+- **`TweetCard`**: Authentic social post card with markdown support, author metadata, character counter, edit mode, copy-to-clipboard, share to X, and `EngagementButtons`.
+- **`Timeline`**: Accordion iteration viewer with `StatusBadge` and `TimelineReviewDetails` (Metric pills, evaluator issues list, reviewer feedback quote).
+- **`SettingsDrawer`**: Inspector settings drawer composing `RubricSlider` controls and reflection / web search toggles.
+- **`SystemDetailsModal`**: Architecture overview modal detailing the single-agent writer, reflection reviewer, guardrails, and stateful loop.
 
 ---
 
-## 6. Interactive Feedback & Motion
+## 6. Logic Separation & Custom Hooks Architecture
 
-### 6.1 Transitions & Curves
+All components follow the **Presenter-Container** pattern, delegating side effects, timers, and state transitions to dedicated custom hooks:
+
+| Custom Hook | Module | Logic Encapsulated |
+| :--- | :--- | :--- |
+| `usePromptEditor` | `hooks/usePromptEditor.ts` | Auto-resizing textarea calculation, `Enter` submission, and `Shift+Enter` multi-line handling. |
+| `useTweetCard` | `hooks/useTweetCard.ts` | Edit mode toggles, clipboard copy with feedback timer, character counting, and share intent formatting. |
+| `useTimeline` | `hooks/useTimeline.ts` | Accordion item expansion and collapse state. |
+| `useTypewriter` | `hooks/useTypewriter.ts` | Phrase rotation, character typing/deleting intervals, pause durations, and unmount timer cleanup. |
+| `useEngagement` | `hooks/useEngagement.ts` | Like count and bookmark toggle states. |
+| `useAppModals` | `hooks/useAppModals.ts` | Inspector settings, history archive, system features modal, and responsive mobile sidebar open/close states. |
+| `useEscapeKey` | `hooks/useEscapeKey.ts` | Global keyboard <kbd>Escape</kbd> event listener management with automatic listener cleanup. |
+
+All TypeScript types and interfaces are centralized in [`frontend/src/types/index.ts`](file:///e:/OneDrive/Courses/AI%20Agentic/Practice/AI%20Tweet%20Generator%20Assistant/frontend/src/types/index.ts).
+
+---
+
+## 7. Interactive Feedback & Motion
+
+### 7.1 Transitions & Curves
 - **Standard UI Speed**: `$apple-transition-speed: 0.15s ease`.
 - **Drawers & Sidebar**: `cubic-bezier(0.4, 0, 0.2, 1)` with `0.25s` duration for fluid open/close motion.
 - **Spinning Loading Animation**: `@keyframes spinSmooth` with `0.8s linear infinite`.
 
-### 6.2 Confetti Celebration
+### 7.2 Confetti Celebration
 - Triggered on generation pass (`canvas-confetti`) using brand palette:
   `['#0066cc', '#34c759', '#af52de', '#ff9500']`.
 
 ---
 
-## 7. Accessibility & Ergonomics
+## 8. Accessibility & Ergonomics
 
 - **Keyboard Navigation**: All interactive buttons, switches, and input controls support standard `:focus-visible` outlines.
+- **Global Escape Handling**: All modals and drawers dismiss on pressing the <kbd>Escape</kbd> key.
 - **Semantic ARIA**: Buttons and dialogs include descriptive `aria-label` tags for screen readers.
 - **High-Contrast Ratios**: Body text meets WCAG AA contrast standards across both light (`#212529` on `#ffffff`) and dark (`#f4f4f5` on `#18181b`) themes.

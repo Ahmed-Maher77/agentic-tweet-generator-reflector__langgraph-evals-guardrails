@@ -6,9 +6,9 @@
 [![Ragas](https://img.shields.io/badge/RAG%20Eval-Ragas-FF6F00.svg)](https://github.com/explodinggradients/ragas)
 [![Hugging Face](https://img.shields.io/badge/NLP%20Eval-Hugging%20Face-yellow.svg)](https://huggingface.co/docs/evaluate/index)
 [![FastAPI](https://img.shields.io/badge/API-FastAPI-green.svg)](https://fastapi.tiangolo.com/)
-[![React](https://img.shields.io/badge/Frontend-React%20%2B%20Vite-blue.svg)](https://vitejs.dev/)
+[![React](https://img.shields.io/badge/Frontend-React%20%2B%20Vite%20%2B%20TS-blue.svg)](https://vitejs.dev/)
 
-A production-grade, stateful AI system that generates high-quality, authentic X/Twitter posts from user prompts and iteratively refines them through an **LLM-based reflection/review loop** orchestrated with **LangGraph**, real-time **Web Search Grounding** (Tavily + DuckDuckGo), 3-tier **Safety & Tool Guardrails**, and an enterprise-grade **Multi-Framework AI Evaluation Suite** (**DeepEval** + **Ragas** + **Hugging Face Evaluate**).
+A production-grade, stateful AI system that generates high-quality, authentic X/Twitter posts from user prompts and iteratively refines them through an **LLM-based reflection/review loop** orchestrated with **LangGraph**, real-time **Web Search Grounding** (Tavily + DuckDuckGo fallback), 3-tier **Safety & Tool Guardrails**, and an enterprise-grade **Multi-Framework AI Evaluation Suite** (**DeepEval** + **Ragas** + **Hugging Face Evaluate**).
 
 ---
 
@@ -68,7 +68,7 @@ A production-grade, stateful AI system that generates high-quality, authentic X/
 
 ### 🔑 Core Architectural Principles
 
-1. **EXACTLY ONE AGENT**: The **Tweet Writer Agent** is the only autonomous agent in the entire system equipped with tool-calling capabilities.
+1. **EXACTLY ONE AGENT**: The **Tweet Writer Agent** is the only autonomous agent in the entire graph equipped with tool-calling capabilities.
 2. **Reviewer is NOT an Agent**: The reviewer is a dedicated LLM-based evaluation node that scores drafts against a multi-dimensional rubric (`relevance`, `clarity`, `professionalism`, `engagement`, `requirement_adherence`) and returns structured verdicts (`PASS` or `REVISE` with actionable critique).
 3. **Deterministic State Machine**: LangGraph manages cycle counters, routing decisions, tool outputs, and state transitions deterministically.
 4. **Three Layers of Guardrails**:
@@ -80,74 +80,61 @@ A production-grade, stateful AI system that generates high-quality, authentic X/
 
 ## 🔬 Multi-Framework AI Evaluation Suite
 
-The project includes an enterprise-grade evaluation suite combining three complementary evaluation frameworks, executed offline for benchmarking and continuous regression testing:
+The project includes an evaluation suite combining three complementary evaluation frameworks, executed offline for benchmarking and continuous regression testing:
 
 ```text
 evals/
-├── datasets/
-│   ├── ultimate_dataset.json   # Master 20-case dataset across 10 categories
-│   ├── deepeval_dataset.json   # DeepEval LLMTestCase structured dataset
-│   ├── ragas_dataset.json      # Ragas search grounding & RAG dataset
-│   └── hf_eval_dataset.json    # Hugging Face Evaluate & NLP dataset
-├── metrics/
-│   ├── deepeval_metrics.py     # Custom G-Eval rubrics, Relevancy, Hallucination
-│   ├── ragas_metrics.py        # Faithfulness, Answer Relevancy, Context Precision/Recall
-│   └── hf_metrics.py           # ROUGE-1/2/L, BLEU, Length & Constraint Adherence
-├── runners/
-│   ├── run_deepeval.py         # DeepEval Baseline vs. Reflection comparative runner
-│   ├── run_ragas.py            # Ragas search retrieval & grounding runner
-│   ├── run_hf_evaluate.py      # Hugging Face Evaluate & NLP performance runner
-│   └── run_all.py              # Master unified CLI suite runner
-├── evals_reports/              # Automatically generated JSON & Markdown reports
-└── optimizer.py                # Automated failure diagnostic and tuning tool
+├── datasets/                     # Categorized evaluation datasets & Golden Set models
+│   ├── __init__.py               # Re-exports loaders, test cases, and dataset builder
+│   ├── golden_set.py             # GoldenTestCase schema models, loader, and framework converters
+│   ├── create_datasets.py        # Programmatic dataset builder & generator for all JSONs
+│   ├── llm_generation.json       # Tone, clarity, style, engagement, professionalism
+│   ├── rag_search.json           # Real-time search grounding, facts, faithfulness
+│   ├── agentic_workflow.json     # Reflection loops, revision iterations, self-correction
+│   ├── agent_tool_calling.json   # Writer agent search tool triggering & accuracy
+│   ├── general_safety.json       # Toxicity, prompt injection, jailbreaks, malformed inputs
+│   └── system_specific.json      # Character budgets (<=280), hashtags, forbidden words
+├── metrics/                      # Modular metric suites
+│   ├── __init__.py               # Unified exports
+│   ├── deepeval_metrics.py       # Answer relevancy, GEval rubrics, hallucination, toxicity, bias
+│   ├── ragas_metrics.py          # Faithfulness, answer relevancy, context precision/recall
+│   └── hf_eval_metrics.py        # ROUGE-1/2/L, BLEU, deterministic constraint adherence, TTR
+├── test_runners/                 # Pytest test classes per evaluation type
+│   ├── __init__.py
+│   ├── test_llm_generation.py    # Tests LLM quality via DeepEval and GEval
+│   ├── test_rag_search.py        # Tests search grounding via Ragas & Hallucination
+│   ├── test_agentic_workflow.py  # Tests multi-pass reflection vs. baseline
+│   ├── test_agent_tool_calling.py# Tests writer agent tool decisions
+│   ├── test_general_safety.py    # Tests guardrail interception & safety
+│   └── test_system_specific.py   # Tests constraint adherence (char limit, hashtags)
+├── result_reports/               # Generated Markdown & JSON reports
+│   ├── latest_evaluation_report.md
+│   └── latest_evaluation_report.json
+└── README.md                     # Detailed evaluation documentation
 ```
 
 ### 1. Framework Breakdown
 
 | Framework | Target Domain | Key Metrics & Evaluators |
 | :--- | :--- | :--- |
-| **DeepEval** | Agent LLM-as-a-Judge | • **Answer Relevancy**<br/>• **Hallucination / Faithfulness**<br/>• **Professionalism & Credibility (GEval)**<br/>• **Engagement Potential (GEval)**<br/>• **Requirement Adherence (GEval)**<br/>• **Reflection Improvement Delta (Iteration 1 vs N)** |
+| **DeepEval** | Agent LLM-as-a-Judge | • **Answer Relevancy**<br/>• **Hallucination / Faithfulness**<br/>• **Professionalism & Credibility (GEval)**<br/>• **Engagement Potential (GEval)**<br/>• **Requirement Adherence (GEval)**<br/>• **Toxicity & Bias Prevention** |
 | **Ragas** | Search Grounding & RAG | • **Faithfulness** (context grounding from Tavily/DDG)<br/>• **Answer Relevancy** (user query alignment)<br/>• **Context Precision** (retrieval signal-to-noise)<br/>• **Context Recall** (coverage of ground truth facts) |
-| **Hugging Face Evaluate** | NLP & Deterministic Quality | • **ROUGE-1 / ROUGE-2 / ROUGE-L**<br/>• **BLEU Score**<br/>• **Exact / Constraint Adherence** (must-include/forbidden terms)<br/>• **Length Budget Compliance** (`<= 140` or `<= 280` chars)<br/>• **Lexical Diversity (Type-Token Ratio)**<br/>• **Latency & Execution Profiling** |
-
-### 2. The Ultimate Master Dataset (`evals/datasets/ultimate_dataset.json`)
-
-20+ richly curated test cases spanning 10 operational categories:
-1. `tech_announcement`: Open-source releases, framework features.
-2. `product_launch`: Feature launches with value proposition and CTAs.
-3. `educational_explainer`: Concise CS/AI concepts with strict character limits.
-4. `viral_hook_thread`: High-engagement thread hooks with open-ended conversation starters.
-5. `realtime_search_grounding`: Factual search queries requiring Tavily/DDG search.
-6. `strict_constraint_compliance`: Strict character budgets (`<= 140`), required hashtags/emojis.
-7. `adversarial_prompt_injection`: Jailbreaks, DAN mode, and system prompt extraction attacks.
-8. `safety_and_toxic_inputs`: Offensive, toxic, and scam payloads.
-9. `malformed_and_nonsense`: Empty whitespace, symbol spam, gibberish.
-10. `compliance_and_governance`: SOC 2 Type II, ISO 27001, GDPR zero-retention claims.
-
-### 3. Automated Reporting & Failure Optimization Loop
-
-Running any evaluation runner automatically generates structured **JSON** data and readable **Markdown** scorecards in `evals/evals_reports/`.
-
-To inspect test failures and receive actionable tuning advice (prompt updates, threshold tuning, guardrail regex adjustments):
-```bash
-python evals/optimizer.py
-```
+| **Hugging Face Evaluate** | NLP & Deterministic Quality | • **ROUGE-1 / ROUGE-2 / ROUGE-L**<br/>• **BLEU Score**<br/>• **Exact Constraint Adherence** (must-include/forbidden terms)<br/>• **Length Budget Compliance** (`<= 140` or `<= 280` chars)<br/>• **Lexical Diversity (Type-Token Ratio)**<br/>• **Latency & Execution Profiling** |
 
 ---
 
 ## 📊 Benchmark Results: Baseline vs. Reflection
 
-The core research question: *Does reflection-based iterative refinement measurably improve tweet quality compared with single-pass generation?*
+Empirical evaluation results comparing single-pass baseline generation against the multi-pass reflection loop across 20 comprehensive test cases:
 
 | Metric | Baseline (Single-Pass) | Reflection (Multi-Pass) | Delta |
 | :--- | :--- | :--- | :--- |
-| **Pass Rate** | 86.7% | **100.0%** | **+13.3%** |
-| **Average Iterations** | 1.00 | 1.83 | +0.83 passes |
-| **Relevance** | 0.912 | 0.968 | +0.056 |
-| **Clarity** | 0.784 | 0.914 | +0.130 |
-| **Professionalism** | 0.842 | 0.941 | +0.099 |
-| **Engagement Potential** | 0.718 | 0.887 | +0.169 |
-| **Requirement Adherence**| 0.803 | 0.962 | +0.159 |
+| **Success Rate** | 70.0% | **75.0%** | **+5.0%** |
+| **Average Attempts** | 0.80 | 0.95 | +0.15 |
+| **Average Latency** | 12.24s | 28.05s | +15.81s |
+| **Constraint Adherence** | 0.912 | 0.900 | -0.012 |
+| **Lexical Diversity (TTR)** | 0.702 | **0.708** | **+0.006** |
+| **Input Blocked (Safety)** | 5 | 5 | 0 |
 
 ---
 
@@ -163,8 +150,6 @@ cd agentic-tweet-generator-reflector__langgraph-evals-guardrails
 # Create virtual environment and install dependencies using uv
 uv venv
 uv sync --all-extras
-# Or install in editable mode:
-# uv pip install -e ".[dev,evals]"
 ```
 
 ### 2. Configure Environment
@@ -175,25 +160,16 @@ Copy `.env.example` to `.env` and configure your API keys:
 cp .env.example .env
 ```
 
-**Groq (Fast & Recommended):**
-```env
-LLM_PROVIDER=groq
-GROQ_API_KEY=gsk-your-groq-key
-WRITER_MODEL=openai/gpt-oss-120b
-REVIEWER_MODEL=openai/gpt-oss-120b
-SAFETY_MODEL=openai/gpt-oss-20b
-
-# Optional: Tavily API Key for real-time web search grounding (falls back to DuckDuckGo if omitted)
-TAVILY_API_KEY=tvly-your-tavily-key
-```
-
-**OpenAI (Another Option):**
+**OpenAI Configuration:**
 ```env
 LLM_PROVIDER=openai
 OPENAI_API_KEY=sk-your-openai-key
 WRITER_MODEL=gpt-4o-mini
 REVIEWER_MODEL=gpt-4o-mini
 SAFETY_MODEL=gpt-4o-mini
+
+# Optional: Tavily API Key for real-time web search grounding (falls back to DuckDuckGo if omitted)
+TAVILY_API_KEY=tvly-your-tavily-key
 ```
 
 ---
@@ -204,11 +180,9 @@ SAFETY_MODEL=gpt-4o-mini
 
 **1. Start the FastAPI Backend using `uv`:**
 ```bash
-uv run uvicorn app.api.main:app --reload --port 8001
+uv run uvicorn app.api.main:app --reload --port 8000
 ```
-> **Tip (Windows):** If port 8000 raises `[WinError 10013]`, use `--port 8001` or `--port 8080`.
-
-Interactive API documentation available at [http://localhost:8001/docs](http://localhost:8001/docs).
+Interactive API documentation available at [http://localhost:8000/docs](http://localhost:8000/docs).
 
 **2. Start the React + Vite Frontend:**
 ```bash
@@ -222,7 +196,7 @@ Open [http://localhost:5173](http://localhost:5173) in your browser.
 
 ### Option B: Direct API Invocations
 ```bash
-curl -X POST "http://localhost:8001/generate" \
+curl -X POST "http://localhost:8000/generate" \
   -H "Content-Type: application/json" \
   -d '{
     "query": "Announce our new LangGraph AI Tweet Generator with reflection loops.",
@@ -243,24 +217,33 @@ docker-compose up --build
 
 ### 1. Unit & Integration Tests (Mocked)
 ```bash
-uv run pytest -v
+uv run pytest tests/ -v
 ```
 
-### 2. AI Evaluation Suite Runners
+### 2. Run Comprehensive Offline Evals via CLI
 ```bash
-# Run ALL evaluation suites (DeepEval + Ragas + HF Evaluate)
-uv run python evals/runners/run_all.py --suite all
+# Run full evaluation across all categories (generates Markdown & JSON reports)
+uv run python scripts/run_evals.py
 
-# Run individual evaluation frameworks
-uv run python evals/runners/run_deepeval.py --limit 5
-uv run python evals/runners/run_ragas.py
-uv run python evals/runners/run_hf_evaluate.py
+# Run specific evaluation category
+uv run python scripts/run_evals.py --eval-type general_safety
 
-# Review evaluation reports and diagnose failing cases
-uv run python evals/optimizer.py
+# Quick sample run
+uv run python scripts/run_evals.py --sample-limit 2
 ```
 
-### 3. Code Style & Type Safety
+### 3. Run Specific Pytest Evaluation Runners
+```bash
+# Safety & tool calling tests (fast offline)
+uv run pytest evals/test_runners/test_general_safety.py evals/test_runners/test_agent_tool_calling.py -v
+
+# Live LLM evaluation runners
+uv run pytest evals/test_runners/test_llm_generation.py -m llm -v
+uv run pytest evals/test_runners/test_rag_search.py -m llm -v
+uv run pytest evals/test_runners/test_agentic_workflow.py -m llm -v
+```
+
+### 4. Code Quality & Linting
 ```bash
 uv run ruff check app tests evals
 uv run mypy app
@@ -278,27 +261,45 @@ AI-Tweet-Generator-Assistant/
 │   ├── graph/           # LangGraph StateGraph, nodes, edges, state
 │   ├── guardrails/      # Input, Output & Tool Action guardrail policies
 │   ├── llm/             # ChatOpenAI client factory & structured outputs
-│   ├── models/          # Shared Pydantic schemas
+│   ├── models/          # Shared Pydantic domain schemas
 │   ├── prompts/         # Structured prompts for writer, reviewer, safety
 │   ├── reflection/      # Reflection Reviewer evaluation node
 │   ├── tools/           # Tavily and DuckDuckGo web search engine tools
 │   ├── config.py        # Centralized pydantic-settings
 │   └── logging_config.py# Structured JSON logging with structlog
-├── docs/                # Comprehensive documentation (DESIGN_SYSTEM.md)
+├── docs/                # Comprehensive documentation
+│   ├── AI_EVALUATION_FRAMEWORKS_COMPARISON.md
+│   ├── DESIGN_SYSTEM.md
+│   └── POC_APPROACH_AND_FUTURE_RECOMMENDATIONS.md
 ├── evals/               # Multi-framework evaluation architecture
-│   ├── datasets/        # Master Ultimate Dataset & framework subsets
+│   ├── datasets/        # Categorized test datasets & Golden Set models
 │   ├── metrics/         # DeepEval, Ragas, and HF Evaluate metric modules
-│   ├── runners/         # Evaluation runners (run_deepeval, run_ragas, run_hf, run_all)
-│   ├── evals_reports/   # Generated timestamped JSON & Markdown reports
-│   ├── optimizer.py     # Evaluation failure reviewer & diagnostic optimizer
+│   ├── test_runners/    # Pytest evaluation test classes
+│   ├── result_reports/  # Generated timestamped JSON & Markdown reports
 │   └── README.md        # Detailed evaluation documentation
 ├── frontend/            # Modern React + TypeScript + Vite + Sass UI
-├── reports/             # Legacy comparative benchmark reports
-├── scripts/             # CLI evaluation and example runner scripts
+│   ├── src/
+│   │   ├── api/         # Backend API client & re-exported types
+│   │   ├── components/  # Modular presentational components
+│   │   │   ├── common/  # BrandLogo, StatusBadge, Drawer, Modal, HistoryItem, etc.
+│   │   │   ├── sidebar/ # SidebarHeader, SidebarNav, SidebarRecentList, SidebarFooter
+│   │   │   ├── tweet/   # EngagementButtons
+│   │   │   ├── timeline/# TimelineReviewDetails
+│   │   │   └── settings/# RubricSlider
+│   │   ├── hooks/       # Custom hooks separating logic (usePromptEditor, useTweetCard, etc.)
+│   │   ├── scss/        # Apple HIG styling tokens, theme definitions, and layout
+│   │   ├── types/       # Centralized TypeScript definitions
+│   │   ├── App.tsx      # Main application container
+│   │   └── main.tsx     # Application entrypoint
+│   └── package.json
+├── scripts/             # Evaluation and example runner CLI scripts
+│   ├── run_evals.py     # Master offline evaluation benchmark CLI
+│   └── run_examples.py  # Quick generation demo script
 ├── tests/               # Comprehensive pytest test suite (100% mocked)
 ├── Dockerfile           # Production container configuration
 ├── docker-compose.yml   # Multi-service compose definition
-└── PROJECT_PLAN.md      # Master architecture and planning manifesto
+├── pyproject.toml       # Python package configuration and dependencies
+└── PROJECT_PLAN.md      # Architecture and design specifications
 ```
 
 ---
