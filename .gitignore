@@ -4,6 +4,7 @@
 
 # --- Python ---
 __pycache__/
+*/__pycache__/
 *.py[cod]
 *$py.class
 *.so
@@ -12,6 +13,7 @@ __pycache__/
 dist/
 build/
 .eggs/
+.mypy_cache/
 
 # --- Virtual Environment ---
 .venv/
@@ -51,6 +53,10 @@ coverage.xml
 
 # --- ruff ---
 .ruff_cache/
+
+# --- system spec docs ---
+AI_Tweet_Generator_Antigravity_Ultimate_Specification.md
+PROJECT_PLAN.md
 
 # --- Jupyter ---
 .ipynb_checkpoints/
