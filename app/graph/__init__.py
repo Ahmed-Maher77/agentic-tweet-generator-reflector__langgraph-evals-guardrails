@@ -1,1 +1,1 @@
-"""LangGraph workflow: state, nodes, edges, and graph compilation."""
+"""LangGraph workflow: state, nodes, edges, cycles, and graph compilation."""
