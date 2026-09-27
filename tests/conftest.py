@@ -4,8 +4,6 @@ All LLM calls are mocked by default. Tests requiring real LLM calls
 must be marked with @pytest.mark.llm and are excluded from default runs.
 """
 
-import os
-from unittest.mock import MagicMock, patch
 
 import pytest
 
@@ -14,8 +12,10 @@ from app.config import Settings
 
 @pytest.fixture(autouse=True)
 def _set_test_env(monkeypatch: pytest.MonkeyPatch) -> None:
-    """Ensure tests never use real API keys by setting a dummy key."""
+    """Ensure tests never use real API keys by setting dummy keys and disable telemetry."""
     monkeypatch.setenv("OPENAI_API_KEY", "sk-test-fake-key-for-testing-only")
+    monkeypatch.setenv("TAVILY_API_KEY", "tvly-fake-key-for-testing-only")
+    monkeypatch.setenv("DEEPEVAL_TELEMETRY_OPT_OUT", "YES")
 
 
 @pytest.fixture()
