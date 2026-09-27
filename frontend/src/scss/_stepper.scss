@@ -1,0 +1,115 @@
+@use "variables" as *;
+
+// Horizontal Stepper Line Track
+.stepper-track-container {
+  position: relative;
+  width: 100%;
+  padding: 1.25rem 0 1.75rem;
+}
+
+.stepper-line {
+  position: absolute;
+  top: 42px;
+  left: 18%;
+  right: 18%;
+  height: 2px;
+  background: linear-gradient(90deg, var(--apple-accent) 0%, var(--apple-warning) 50%, var(--apple-success) 100%);
+  opacity: 0.55;
+  z-index: 1;
+
+  @media (max-width: 767.98px) {
+    display: none;
+  }
+}
+
+.stepper-step-item {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  .stepper-node-wrapper {
+    position: relative;
+    margin-bottom: 0.85rem;
+  }
+
+  .stepper-node {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--apple-surface-1);
+    border: 2px solid var(--apple-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.2s ease;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.09);
+    }
+
+    &.node-1 {
+      border-color: var(--apple-accent);
+      color: var(--apple-accent);
+      background: var(--apple-surface-1);
+    }
+
+    &.node-2 {
+      border-color: var(--apple-warning);
+      color: var(--apple-warning);
+      background: var(--apple-surface-1);
+    }
+
+    &.node-3 {
+      border-color: var(--apple-success);
+      color: var(--apple-success);
+      background: var(--apple-surface-1);
+    }
+  }
+
+  .stepper-badge-num {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    width: 19px;
+    height: 19px;
+    border-radius: 50%;
+    font-size: 0.68rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+
+    &.badge-1 {
+      background: var(--apple-accent);
+    }
+    &.badge-2 {
+      background: var(--apple-warning);
+    }
+    &.badge-3 {
+      background: var(--apple-success);
+    }
+  }
+
+  .step-title {
+    font-weight: 600;
+    font-size: 0.98rem;
+    color: var(--apple-text-primary);
+    margin-bottom: 0.3rem;
+    letter-spacing: -0.01em;
+  }
+
+  .step-desc {
+    font-size: 0.82rem;
+    color: var(--apple-text-secondary);
+    line-height: 1.5;
+    max-width: 255px;
+    margin: 0 auto;
+  }
+}

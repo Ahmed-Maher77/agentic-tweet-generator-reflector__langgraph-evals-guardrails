@@ -1,0 +1,219 @@
+@use "variables" as *;
+
+// Normalized Card Container
+.apple-card {
+  background: var(--apple-surface-1);
+  border: 1px solid var(--apple-border);
+  border-radius: $apple-radius-lg;
+  overflow: hidden;
+
+  &.apple-card-hover:hover {
+    border-color: var(--apple-text-secondary);
+  }
+}
+
+// Tweet Showcase Box
+.tweet-showcase {
+  background: var(--apple-surface-1);
+  border: 1px solid var(--apple-border);
+  border-radius: $apple-radius-lg;
+  padding: 1.25rem;
+
+  .tweet-author {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.85rem;
+
+    .avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: var(--apple-surface-2);
+      border: 1px solid var(--apple-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--apple-accent);
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    .author-meta {
+      .name {
+        font-weight: 600;
+        font-size: 0.95rem;
+        display: flex;
+        align-items: center;
+        gap: 0.35rem;
+      }
+      .handle {
+        color: var(--apple-text-secondary);
+        font-size: 0.8rem;
+      }
+    }
+  }
+
+  .tweet-body {
+    font-size: 1.05rem;
+    line-height: 1.55;
+    word-break: break-word;
+    color: var(--apple-text-primary);
+
+    p {
+      margin-bottom: 0.6rem;
+      white-space: pre-wrap;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+
+    strong {
+      font-weight: 600;
+      color: var(--apple-text-primary);
+    }
+
+    em {
+      font-style: italic;
+    }
+
+    a {
+      color: var(--apple-accent);
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+
+    code:not(pre code) {
+      font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 0.88em;
+      background: var(--apple-surface-2);
+      border: 1px solid var(--apple-border);
+      padding: 0.15rem 0.35rem;
+      border-radius: 4px;
+      color: var(--apple-text-primary);
+    }
+
+    pre {
+      background: var(--apple-surface-2);
+      border: 1px solid var(--apple-border);
+      border-radius: 6px;
+      padding: 0.6rem 0.8rem;
+      margin: 0.5rem 0;
+      overflow-x: auto;
+
+      code {
+        font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+        font-size: 0.85em;
+        background: transparent;
+        border: none;
+        padding: 0;
+        color: var(--apple-text-primary);
+      }
+    }
+
+    ul, ol {
+      padding-left: 1.25rem;
+      margin-bottom: 0.5rem;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+
+    li {
+      margin-bottom: 0.25rem;
+    }
+
+    blockquote {
+      border-left: 3px solid var(--apple-accent);
+      padding-left: 0.75rem;
+      margin: 0.5rem 0;
+      color: var(--apple-text-secondary);
+      font-style: italic;
+    }
+  }
+
+  .tweet-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 1rem;
+    padding-top: 0.85rem;
+    border-top: 1px solid var(--apple-border);
+    color: var(--apple-text-secondary);
+    font-size: 0.8rem;
+  }
+}
+
+// Metric Score Tile
+.metric-tile {
+  background: var(--apple-surface-2);
+  border: 1px solid var(--apple-border);
+  border-radius: $apple-radius-sm;
+  padding: 0.65rem 0.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+
+  .metric-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--apple-text-secondary);
+  }
+
+  .metric-value {
+    font-size: 1.15rem;
+    font-weight: 600;
+    font-family: $font-family-code;
+  }
+
+  .metric-progress {
+    height: 3px;
+    background: var(--apple-surface-3);
+    border-radius: 2px;
+    overflow: hidden;
+
+    .progress-bar {
+      height: 100%;
+      border-radius: 2px;
+    }
+  }
+}
+
+// Timeline Item
+.timeline-item {
+  border-bottom: 1px solid var(--apple-border);
+  padding: 1rem 0;
+
+  &:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  &:first-child {
+    padding-top: 0;
+  }
+}
+
+// Toast Notification
+.dynamic-island {
+  position: fixed;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--apple-surface-1);
+  color: var(--apple-text-primary);
+  border-radius: $apple-radius-md;
+  padding: 0.5rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  z-index: 2000;
+  border: 1px solid var(--apple-border);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}

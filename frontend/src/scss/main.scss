@@ -1,0 +1,40 @@
+// Main Apple HIG Design System SCSS
+
+@use "variables" as *;
+@use "apple-theme";
+@use "animations";
+@use "layout";
+@use "buttons";
+@use "badges";
+@use "chat";
+@use "stepper";
+@use "cards";
+
+// Global reset & utility tweaks
+html, body {
+  scroll-behavior: smooth;
+}
+
+::selection {
+  background: var(--apple-accent-subtle);
+  color: var(--apple-accent);
+}
+
+// Custom Apple Scrollbar
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--apple-surface-3);
+  border-radius: 4px;
+
+  &:hover {
+    background: var(--apple-text-tertiary);
+  }
+}

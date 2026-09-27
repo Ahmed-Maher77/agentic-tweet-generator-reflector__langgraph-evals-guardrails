@@ -1,0 +1,142 @@
+@use "variables" as *;
+
+// Standard Apple HIG Buttons
+.apple-btn {
+  font-family: $font-family-apple;
+  font-weight: 500;
+  font-size: 0.9rem;
+  border-radius: $apple-radius-md;
+  padding: 0.5rem 1rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: background-color $apple-transition-speed ease, border-color $apple-transition-speed ease;
+  text-decoration: none;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &-primary {
+    background: var(--apple-accent);
+    color: #ffffff;
+
+    &:hover:not(:disabled) {
+      background: var(--apple-accent-hover);
+      color: #ffffff;
+    }
+  }
+
+  &-secondary {
+    background: var(--apple-surface-2);
+    color: var(--apple-text-primary);
+    border-color: var(--apple-border);
+
+    &:hover:not(:disabled) {
+      background: var(--apple-surface-3);
+      color: var(--apple-text-primary);
+    }
+  }
+
+  &-ghost {
+    background: transparent;
+    color: var(--apple-text-secondary);
+
+    &:hover:not(:disabled) {
+      background: var(--apple-surface-2);
+      color: var(--apple-text-primary);
+    }
+  }
+
+  &-sm {
+    padding: 0.3rem 0.65rem;
+    font-size: 0.8rem;
+    border-radius: $apple-radius-sm;
+  }
+}
+
+// Circular Send/Generate Action Button
+.apple-btn-circle {
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  border-radius: 50%;
+  background: var(--apple-accent);
+  color: #ffffff;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.15s ease, transform 0.1s ease;
+  flex-shrink: 0;
+
+  &:hover:not(:disabled) {
+    background: var(--apple-accent-hover);
+    transform: scale(1.04);
+  }
+
+  &:active:not(:disabled) {
+    transform: scale(0.96);
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none;
+  }
+}
+
+// Normalized iOS Switch Toggle
+.apple-switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+  flex-shrink: 0;
+  cursor: pointer;
+  user-select: none;
+
+  input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+    position: absolute;
+  }
+
+  .slider {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--apple-surface-3);
+    border-radius: 24px;
+    transition: background-color 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+
+    &:before {
+      position: absolute;
+      content: "";
+      height: 20px;
+      width: 20px;
+      left: 2px;
+      top: 2px;
+      background-color: #ffffff;
+      border-radius: 50%;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25), 0 0 1px rgba(0, 0, 0, 0.1);
+      transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+  }
+
+  input:checked + .slider {
+    background-color: var(--apple-success);
+  }
+
+  input:checked + .slider:before {
+    transform: translateX(20px);
+  }
+}

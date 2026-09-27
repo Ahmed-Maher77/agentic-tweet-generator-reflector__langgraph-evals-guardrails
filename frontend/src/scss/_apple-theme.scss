@@ -1,0 +1,66 @@
+@use "variables" as *;
+
+:root {
+  --apple-bg: #{$apple-bg-light};
+  --apple-surface-1: #{$apple-surface-light-1};
+  --apple-surface-2: #{$apple-surface-light-2};
+  --apple-surface-3: #{$apple-surface-light-3};
+  --apple-border: #{$apple-border-light};
+  --apple-text-primary: #{$apple-text-primary-light};
+  --apple-text-secondary: #{$apple-text-secondary-light};
+  --apple-text-tertiary: #{$apple-text-tertiary-light};
+
+  --apple-accent: #{$apple-blue-light};
+  --apple-accent-hover: #0052a3;
+  --apple-accent-subtle: #e6f0fa;
+
+  --apple-success: #{$apple-green-light};
+  --apple-success-subtle: #e8f5e9;
+  --apple-warning: #{$apple-orange-light};
+  --apple-warning-subtle: #fef5e7;
+  --apple-danger: #{$apple-red-light};
+  --apple-danger-subtle: #fbebee;
+  --apple-purple: #{$apple-purple-light};
+  --apple-purple-subtle: #f3e8fd;
+
+  --apple-grid-color: rgba(0, 0, 0, 0.045);
+  --apple-bg-side-glow: rgba(255, 255, 255, 0.85);
+}
+
+[data-bs-theme="dark"] {
+  --apple-bg: #{$apple-bg-dark};
+  --apple-surface-1: #{$apple-surface-dark-1};
+  --apple-surface-2: #{$apple-surface-dark-2};
+  --apple-surface-3: #{$apple-surface-dark-3};
+  --apple-border: #{$apple-border-dark};
+  --apple-text-primary: #{$apple-text-primary-dark};
+  --apple-text-secondary: #{$apple-text-secondary-dark};
+  --apple-text-tertiary: #{$apple-text-tertiary-dark};
+
+  --apple-accent: #{$apple-blue-dark};
+  --apple-accent-hover: #54aeff;
+  --apple-accent-subtle: #162438;
+
+  --apple-success: #{$apple-green-dark};
+  --apple-success-subtle: #12281a;
+  --apple-warning: #{$apple-orange-dark};
+  --apple-warning-subtle: #2d1d0c;
+  --apple-danger: #{$apple-red-dark};
+  --apple-danger-subtle: #2d1316;
+  --apple-purple: #{$apple-purple-dark};
+  --apple-purple-subtle: #251633;
+
+  --apple-grid-color: rgba(255, 255, 255, 0.04);
+  --apple-bg-side-glow: rgba(255, 255, 255, 0.035);
+}
+
+body {
+  font-family: $font-family-apple;
+  background-color: var(--apple-bg);
+  color: var(--apple-text-primary);
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}

@@ -1,0 +1,186 @@
+@use "variables" as *;
+
+// Master Flex Viewport
+.app-layout {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+}
+
+// Professional Collapsible Sidebar
+.app-sidebar {
+  width: 260px;
+  height: 100vh;
+  background: var(--apple-surface-1);
+  border-right: 1px solid var(--apple-border);
+  z-index: 1030;
+  flex-shrink: 0;
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+
+  @media (max-width: 991.98px) {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 1060;
+    transform: translateX(-100%);
+    box-shadow: 0 0 24px rgba(0, 0, 0, 0.35);
+
+    &.show-mobile {
+      transform: translateX(0);
+    }
+  }
+
+  &.collapsed {
+    width: 68px;
+
+    .sidebar-header {
+      padding: 0.75rem 0.25rem !important;
+      flex-direction: column !important;
+      align-items: center !important;
+      justify-content: center !important;
+      gap: 0.5rem;
+    }
+
+    .sidebar-brand-text,
+    .sidebar-nav-item span,
+    .sidebar-section-title,
+    .sidebar-history-container,
+    .apple-btn span,
+    .theme-label,
+    .badge-count {
+      display: none !important;
+    }
+
+    .apple-btn {
+      padding: 0.5rem;
+      justify-content: center;
+    }
+
+    .sidebar-nav-item {
+      justify-content: center;
+      padding: 0.55rem 0;
+    }
+
+    .theme-toggle-row {
+      justify-content: center;
+    }
+  }
+}
+
+// Main Viewport Canvas with Ambient Side Illumination & Grid Mesh
+.app-main {
+  flex-grow: 1;
+  min-width: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+  background-color: var(--apple-bg);
+  background-image:
+    linear-gradient(90deg, var(--apple-bg-side-glow) 0%, transparent 18%, transparent 82%, var(--apple-bg-side-glow) 100%),
+    linear-gradient(to right, var(--apple-grid-color) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--apple-grid-color) 1px, transparent 1px);
+  background-size: 100% 100%, 32px 32px, 32px 32px;
+}
+
+// Scrollable Content Viewport
+.app-scrollable-content {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: 1.5rem;
+  padding-bottom: 7rem; /* Extra padding so content is not obscured by bottom dock */
+
+  @media (max-width: 768px) {
+    padding: 1rem;
+    padding-bottom: 8rem;
+  }
+}
+
+// Mobile Top Bar
+.mobile-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  background: var(--apple-surface-1);
+  border-bottom: 1px solid var(--apple-border);
+  flex-shrink: 0;
+  z-index: 1020;
+}
+
+// Sidebar Navigation Items
+.sidebar-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  width: 100%;
+  padding: 0.45rem 0.75rem;
+  border-radius: $apple-radius-sm;
+  background: transparent;
+  border: none;
+  color: var(--apple-text-secondary);
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color $apple-transition-speed ease, color $apple-transition-speed ease;
+
+  &:hover {
+    background: var(--apple-surface-2);
+    color: var(--apple-text-primary);
+  }
+
+  &.active {
+    background: var(--apple-accent-subtle);
+    color: var(--apple-accent);
+    font-weight: 600;
+  }
+
+  .badge-count {
+    font-size: 0.7rem;
+    background: var(--apple-surface-3);
+    color: var(--apple-text-primary);
+    padding: 1px 6px;
+    border-radius: 999px;
+  }
+}
+
+// Sidebar History Entry
+.sidebar-history-item {
+  padding: 0.45rem 0.65rem;
+  border-radius: $apple-radius-sm;
+  background: transparent;
+  cursor: pointer;
+  transition: background-color $apple-transition-speed ease;
+
+  &:hover {
+    background: var(--apple-surface-2);
+
+    .delete-btn {
+      opacity: 1;
+    }
+  }
+
+  .title {
+    font-size: 0.8rem;
+    color: var(--apple-text-primary);
+    line-height: 1.3;
+  }
+
+  .delete-btn {
+    opacity: 0;
+    background: transparent;
+    border: none;
+    color: var(--apple-text-tertiary);
+    padding: 0;
+    cursor: pointer;
+    transition: opacity 0.15s ease, color 0.15s ease;
+
+    &:hover {
+      color: var(--apple-danger);
+    }
+  }
+}

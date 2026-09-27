@@ -1,0 +1,44 @@
+// Normalized Clean Design Tokens
+
+// Primary Palette
+$apple-blue-light: #0066cc;
+$apple-blue-dark: #2997ff;
+$apple-green-light: #28a745;
+$apple-green-dark: #30d158;
+$apple-orange-light: #e67e22;
+$apple-orange-dark: #ff9f0a;
+$apple-red-light: #dc3545;
+$apple-red-dark: #ff453a;
+$apple-purple-light: #6f42c1;
+$apple-purple-dark: #bf5af2;
+
+// Dark Mode Neutrals (Normalized slate/zinc)
+$apple-bg-dark: #121214;
+$apple-surface-dark-1: #18181b;
+$apple-surface-dark-2: #222226;
+$apple-surface-dark-3: #2d2d32;
+$apple-border-dark: #2e2e33;
+$apple-text-primary-dark: #f4f4f5;
+$apple-text-secondary-dark: #a1a1aa;
+$apple-text-tertiary-dark: #71717a;
+
+// Light Mode Neutrals (Normalized clean white/gray)
+$apple-bg-light: #f8f9fa;
+$apple-surface-light-1: #ffffff;
+$apple-surface-light-2: #f1f3f5;
+$apple-surface-light-3: #e9ecef;
+$apple-border-light: #dee2e6;
+$apple-text-primary-light: #212529;
+$apple-text-secondary-light: #6c757d;
+$apple-text-tertiary-light: #adb5bd;
+
+// Typography Font Stack
+$font-family-apple: 'Udemy Sans', 'Noto Sans JP', 'Vazirmatn', -apple-system, BlinkMacSystemFont, Roboto, 'Segoe UI', Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+$font-family-code: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+
+// Radii
+$apple-radius-sm: 6px;
+$apple-radius-md: 8px;
+$apple-radius-lg: 12px;
+
+$apple-transition-speed: 0.15s;
