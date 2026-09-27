@@ -4,18 +4,25 @@ Produces JSON-formatted log output with consistent fields for observability.
 Configured log level is read from Settings.
 """
 
+import contextlib
 import logging
 import sys
 
 import structlog
 
 
+# =============== Set Up Logging ===============
 def setup_logging(log_level: str = "INFO") -> None:
     """Configure structured logging for the application.
 
     Args:
         log_level: Logging level string (DEBUG, INFO, WARNING, ERROR, CRITICAL).
     """
+    # Ensure stdout handles UTF-8 (prevents Windows UnicodeEncodeError on emojis)
+    if hasattr(sys.stdout, "reconfigure"):
+        with contextlib.suppress(Exception):
+            sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+
     # Validate and convert log level
     numeric_level = getattr(logging, log_level.upper(), None)
     if not isinstance(numeric_level, int):
@@ -54,6 +61,8 @@ def setup_logging(log_level: str = "INFO") -> None:
     logging.getLogger("httpcore").setLevel(logging.WARNING)
 
 
+
+# =============== Get Logger ===============
 def get_logger(name: str | None = None) -> structlog.stdlib.BoundLogger:
     """Get a structured logger instance.
 
@@ -63,4 +72,4 @@ def get_logger(name: str | None = None) -> structlog.stdlib.BoundLogger:
     Returns:
         A bound structured logger.
     """
-    return structlog.get_logger(name)
+    return structlog.stdlib.get_logger(name)
