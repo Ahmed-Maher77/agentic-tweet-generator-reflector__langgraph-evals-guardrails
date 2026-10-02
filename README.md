@@ -1,4 +1,4 @@
-# 🐦 AI Tweet Generator & Reflection Reviewer
+# AI Tweet Generator & Reflection Reviewer
 
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![LangGraph](https://img.shields.io/badge/Orchestration-LangGraph-orange.svg)](https://github.com/langchain-ai/langgraph)
@@ -125,16 +125,22 @@ evals/
 
 ## 📊 Benchmark Results: Baseline vs. Reflection
 
-Empirical evaluation results comparing single-pass baseline generation against the multi-pass reflection loop across 20 comprehensive test cases:
+Empirical evaluation results comparing single-pass baseline generation against the multi-pass reflection loop across 20 real test cases executed on Groq (`openai/gpt-oss-20b`):
 
 | Metric | Baseline (Single-Pass) | Reflection (Multi-Pass) | Delta |
 | :--- | :--- | :--- | :--- |
-| **Success Rate** | 70.0% | **75.0%** | **+5.0%** |
-| **Average Attempts** | 0.80 | 0.95 | +0.15 |
-| **Average Latency** | 12.24s | 28.05s | +15.81s |
-| **Constraint Adherence** | 0.912 | 0.900 | -0.012 |
-| **Lexical Diversity (TTR)** | 0.702 | **0.708** | **+0.006** |
+| **Success Rate** | 90.0% | **95.0%** | **+5.0%** |
+| **Average Attempts** | 0.80 | 1.00 | +0.20 |
+| **Average Latency** | 19.80s | 37.27s | +17.47s |
+| **Constraint Adherence** | 0.938 | **0.950** | **+0.012** |
+| **Lexical Diversity (TTR)** | 0.917 | 0.916 | -0.001 |
 | **Input Blocked (Safety)** | 5 | 5 | 0 |
+
+### 📈 NLP Scores (Hugging Face Evaluate)
+- **ROUGE-1**: `0.3253`
+- **ROUGE-2**: `0.1350`
+- **ROUGE-L**: `0.2697`
+- **BLEU**: `0.0657`
 
 ---
 
@@ -160,13 +166,27 @@ Copy `.env.example` to `.env` and configure your API keys:
 cp .env.example .env
 ```
 
-**OpenAI Configuration:**
+**Option A: Groq Configuration (Ultra-fast inference & high throughput):**
+```env
+LLM_PROVIDER=groq
+GROQ_API_KEY=gsk_your-groq-api-key
+WRITER_MODEL=openai/gpt-oss-20b
+REVIEWER_MODEL=openai/gpt-oss-20b
+SAFETY_MODEL=openai/gpt-oss-20b
+JUDGE_MODEL=openai/gpt-oss-20b
+
+# Optional: Tavily API Key for real-time web search grounding (falls back to DuckDuckGo if omitted)
+TAVILY_API_KEY=tvly-your-tavily-key
+```
+
+**Option B: OpenAI Configuration:**
 ```env
 LLM_PROVIDER=openai
 OPENAI_API_KEY=sk-your-openai-key
 WRITER_MODEL=gpt-4o-mini
 REVIEWER_MODEL=gpt-4o-mini
 SAFETY_MODEL=gpt-4o-mini
+JUDGE_MODEL=gpt-4o-mini
 
 # Optional: Tavily API Key for real-time web search grounding (falls back to DuckDuckGo if omitted)
 TAVILY_API_KEY=tvly-your-tavily-key

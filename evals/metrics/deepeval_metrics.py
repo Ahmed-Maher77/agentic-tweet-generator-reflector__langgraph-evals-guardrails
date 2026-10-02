@@ -10,20 +10,46 @@ from deepeval.metrics import (
     HallucinationMetric,
     ToxicityMetric,
 )
+from deepeval.models.base_model import DeepEvalBaseLLM
 from deepeval.test_case import LLMTestCaseParams
 
+from app.config import get_settings
+from app.llm.client import get_chat_model
+
+
+class AppDeepEvalModel(DeepEvalBaseLLM):
+    """DeepEval custom LLM adapter using the application's configured LLM provider (Groq / OpenAI)."""
+
+    def __init__(self, model_name: str | None = None, *args: Any, **kwargs: Any) -> None:
+        self._settings = get_settings()
+        self._model_name = model_name or self._settings.judge_model
+        super().__init__(model=self._model_name, *args, **kwargs)
+
+    def load_model(self, *args: Any, **kwargs: Any) -> Any:
+        return get_chat_model(
+            model_name=self._model_name,
+            temperature=0.0,
+            settings=self._settings,
+        )
+
+    def generate(self, prompt: str, *args: Any, **kwargs: Any) -> str:
+        response = self.model.invoke(prompt)
+        return str(response.content)
+
+    async def a_generate(self, prompt: str, *args: Any, **kwargs: Any) -> str:
+        response = await self.model.ainvoke(prompt)
+        return str(response.content)
+
+    def get_model_name(self, *args: Any, **kwargs: Any) -> str:
+        return self._model_name
 
 
 def _get_default_evaluation_model(model: Any = None) -> Any:
-    """Return configured evaluation model, defaulting to local OllamaModel."""
+    """Return configured evaluation model, defaulting to application configured LLM adapter."""
     if model is not None:
         return model
-    model_name = os.getenv("OLLAMA_MODEL", "gpt-oss:120b-cloud")
-    base_url = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434").replace("/v1", "").rstrip("/")
     try:
-        from deepeval.models import OllamaModel
-
-        return OllamaModel(model=model_name, base_url=base_url)
+        return AppDeepEvalModel()
     except Exception:
         return None
 

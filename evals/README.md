@@ -71,10 +71,10 @@ uv run python scripts/run_evals.py --sample-limit 2
 To run specific evaluation test runners:
 
 ```bash
-# Run safety and deterministic constraint runners (no live LLM needed)
+# Run safety and deterministic constraint runners (fast offline)
 uv run pytest evals/test_runners/test_general_safety.py evals/test_runners/test_agent_tool_calling.py -v
 
-# Run live LLM quality runners (requires OPENAI_API_KEY)
+# Run live LLM quality runners (requires GROQ_API_KEY or OPENAI_API_KEY)
 uv run pytest evals/test_runners/test_llm_generation.py -m llm -v
 uv run pytest evals/test_runners/test_rag_search.py -m llm -v
 uv run pytest evals/test_runners/test_agentic_workflow.py -m llm -v

@@ -1,4 +1,4 @@
-"""Test runner for agent tool calling and search decision evaluation with local Ollama LLM."""
+"""Test runner for agent tool calling and search decision evaluation with configured LLM (Groq / OpenAI)."""
 
 import pytest
 from langchain_core.language_models.chat_models import BaseChatModel
@@ -19,9 +19,9 @@ class TestAgentToolCallingEvaluation:
     def test_agent_tool_decision(
         self,
         test_case: GoldenTestCase,
-        ollama_llm: BaseChatModel,
+        chat_model: BaseChatModel,
     ) -> None:
-        """Verify the agent's autonomous tool-calling logic and execution with real local LLM."""
+        """Verify the agent's autonomous tool-calling logic and execution with configured LLM."""
         search_enabled = bool(test_case.should_use_tool)
 
         tweet, search_used = run_writer_agent(
@@ -29,7 +29,7 @@ class TestAgentToolCallingEvaluation:
             attempt=1,
             max_attempts=3,
             search_enabled=search_enabled,
-            llm=ollama_llm,
+            llm=chat_model,
         )
 
         assert tweet != "", f"Expected non-empty tweet for test case {test_case.id}"

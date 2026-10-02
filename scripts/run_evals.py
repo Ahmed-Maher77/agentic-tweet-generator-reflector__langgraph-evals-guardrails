@@ -3,9 +3,13 @@
 import argparse
 import datetime
 import json
+import sys
 import time
 from pathlib import Path
 from typing import Any
+
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 from app.config import Settings, get_settings
 from app.graph.state import TweetState
@@ -31,6 +35,7 @@ def evaluate_single_run(
     graph: Any,
     test_case: GoldenTestCase,
     reflection_enabled: bool,
+    max_retries: int = 3,
 ) -> dict[str, Any]:
     """Execute a single test case through the tweet graph and measure performance."""
     start_time = time.perf_counter()
@@ -42,7 +47,29 @@ def evaluate_single_run(
         "search_enabled": test_case.search_needed,
     }
 
-    final_state = graph.invoke(state)
+    final_state: dict[str, Any] = {}
+    for attempt in range(max_retries):
+        try:
+            final_state = graph.invoke(state)
+            break
+        except Exception as e:
+            if "rate_limit" in str(e).lower() or "429" in str(e):
+                wait_time = 10 * (attempt + 1)
+                logger.warning("rate_limit_encountered_retrying", wait_sec=wait_time, attempt=attempt + 1)
+                time.sleep(wait_time)
+            else:
+                logger.error("evaluation_invoke_error", error=str(e), case_id=test_case.id)
+                if attempt == max_retries - 1:
+                    final_state = {
+                        "final_status": "ERROR",
+                        "tweet": "",
+                        "attempt": 0,
+                        "review_passed": False,
+                        "input_blocked": False,
+                        "output_blocked": False,
+                    }
+                time.sleep(2)
+
     latency_sec = time.perf_counter() - start_time
     tweet = final_state.get("tweet", "")
 
@@ -61,7 +88,7 @@ def evaluate_single_run(
         "category": test_case.category,
         "query": test_case.query,
         "reflection_enabled": reflection_enabled,
-        "status": final_state.get("final_status"),
+        "status": final_state.get("final_status", "ERROR"),
         "tweet": tweet,
         "attempts": final_state.get("attempt", 0),
         "review_passed": final_state.get("review_passed", False),
@@ -73,6 +100,7 @@ def evaluate_single_run(
         "hashtags_passed": compliance["hashtags_passed"],
         "lexical_diversity_ttr": ttr,
         "latency_sec": round(latency_sec, 3),
+        "should_block_input": test_case.should_block_input,
     }
 
 
@@ -109,25 +137,43 @@ def run_evaluations(
         # 1. Baseline Run (Single Pass)
         b_res = evaluate_single_run(graph, tc, reflection_enabled=False)
         baseline_results.append(b_res)
+        time.sleep(0.5)
 
         # 2. Reflection Run (Iterative Refinement)
         r_res = evaluate_single_run(graph, tc, reflection_enabled=True)
         reflection_results.append(r_res)
+        time.sleep(0.5)
 
     # Compute NLP scores against ground truth
-    predictions = [r["tweet"] for r in reflection_results if r["tweet"]]
-    references = [[tc.ground_truth_reference or ""] for tc, r in zip(all_test_cases, reflection_results, strict=True) if r["tweet"]]
+    valid_pairs = [
+        (r["tweet"], [tc.ground_truth_reference])
+        for tc, r in zip(all_test_cases, reflection_results, strict=True)
+        if r["tweet"] and tc.ground_truth_reference
+    ]
+    predictions = [p[0] for p in valid_pairs]
+    references = [p[1] for p in valid_pairs]
     nlp_scores = compute_nlp_metrics(predictions, references) if predictions and references else {}
 
     # Aggregates
     def summarize(results: list[dict[str, Any]]) -> dict[str, Any]:
         total = len(results) or 1
-        successes = sum(1 for r in results if r["status"] == "SUCCESS")
-        input_blocked = sum(1 for r in results if r["input_blocked"])
+
+        def is_test_passed(r: dict[str, Any]) -> bool:
+            if r.get("should_block_input", False):
+                return bool(r.get("input_blocked", False))
+            return r.get("status") == "SUCCESS"
+
+        successes = sum(1 for r in results if is_test_passed(r))
+        input_blocked = sum(1 for r in results if r.get("input_blocked"))
+        generated_tweets = [r for r in results if r.get("tweet")]
         avg_attempts = sum(r["attempts"] for r in results) / total
         avg_latency = sum(r["latency_sec"] for r in results) / total
         avg_compliance = sum(r["compliance_score"] for r in results) / total
-        avg_ttr = sum(r["lexical_diversity_ttr"] for r in results) / total
+        avg_ttr = (
+            sum(r["lexical_diversity_ttr"] for r in generated_tweets) / len(generated_tweets)
+            if generated_tweets
+            else 0.0
+        )
 
         return {
             "total_cases": total,

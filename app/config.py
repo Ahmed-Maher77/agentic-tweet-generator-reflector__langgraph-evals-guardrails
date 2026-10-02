@@ -92,13 +92,13 @@ class Settings(BaseSettings):
                 self.openai_api_base = "https://api.groq.com/openai/v1"
             # Auto-map OpenAI defaults to high-performance Groq models
             if self.writer_model == "gpt-4o-mini":
-                self.writer_model = "openai/gpt-oss-120b"
+                self.writer_model = "openai/gpt-oss-20b"
             if self.reviewer_model == "gpt-4o-mini":
-                self.reviewer_model = "openai/gpt-oss-120b"
+                self.reviewer_model = "openai/gpt-oss-20b"
             if self.safety_model == "gpt-4o-mini":
                 self.safety_model = "openai/gpt-oss-20b"
             if self.judge_model == "gpt-4o-mini":
-                self.judge_model = "openai/gpt-oss-120b"
+                self.judge_model = "openai/gpt-oss-20b"
         else:
             raise ValueError("Neither OPENAI_API_KEY nor GROQ_API_KEY is available. Please provide at least one valid API key.")
 

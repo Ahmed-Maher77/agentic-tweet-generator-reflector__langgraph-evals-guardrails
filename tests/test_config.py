@@ -83,10 +83,10 @@ class TestSettingsValidation:
         assert settings.llm_provider == "groq"
         assert settings.effective_api_key.get_secret_value() == "gsk-test-groq-key"
         assert settings.effective_base_url == "https://api.groq.com/openai/v1"
-        assert settings.writer_model == "openai/gpt-oss-120b"
-        assert settings.reviewer_model == "openai/gpt-oss-120b"
+        assert settings.writer_model == "openai/gpt-oss-20b"
+        assert settings.reviewer_model == "openai/gpt-oss-20b"
         assert settings.safety_model == "openai/gpt-oss-20b"
-        assert settings.judge_model == "openai/gpt-oss-120b"
+        assert settings.judge_model == "openai/gpt-oss-20b"
 
     def test_temperature_below_zero_raises(self) -> None:
         with pytest.raises(ValidationError):

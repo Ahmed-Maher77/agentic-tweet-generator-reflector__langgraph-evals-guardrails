@@ -25,10 +25,12 @@ def test_settings() -> Settings:
     Uses the dummy API key set by _set_test_env.
     """
     return Settings(
+        _env_file=None,
         openai_api_key="sk-test-fake-key-for-testing-only",  # type: ignore[arg-type]
         writer_model="gpt-4o-mini",
         reviewer_model="gpt-4o-mini",
         safety_model="gpt-4o-mini",
+        judge_model="gpt-4o-mini",
         writer_temperature=0.7,
         reviewer_temperature=0.3,
         max_attempts=3,

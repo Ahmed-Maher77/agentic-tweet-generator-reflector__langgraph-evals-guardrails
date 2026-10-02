@@ -42,7 +42,7 @@ Rather than treating evaluation as an afterthought or relying on a single monoli
 ## 2. Key Empirical Findings & Insights
 
 1. **Measurable Value of Reflection**:
-   - Multi-pass reflection yields a **+5.0% higher overall success rate** (75.0% vs 70.0%) and improved lexical diversity (+0.006 TTR) compared to single-pass baseline generation across 20 rigorous test cases.
+   - Multi-pass reflection yields a **95.0% overall success rate** (vs. 90.0% baseline, **+5.0% gain**) and improves constraint adherence to **0.950** (vs. 0.938) across the 20 real test cases executed on Groq (`openai/gpt-oss-20b`).
 2. **Cost-Optimization through Multi-Tiered Gating**:
    - Executing Tier 1 deterministic checks (length <= 280, forbidden words) *before* invoking LLM judges saves up to **40% of LLM evaluation API costs** by eliminating invalid candidates early.
 3. **Retrieval Grounding Necessity**:
