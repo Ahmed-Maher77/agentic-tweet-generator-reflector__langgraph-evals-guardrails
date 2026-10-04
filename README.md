@@ -14,9 +14,10 @@ A production-grade, stateful AI system that generates high-quality, authentic X/
 
 ---
 
-## 🎬 Live Demo & Video Walkthrough
+## 🎬 Video Walkthrough
 
 - **Watch Demo Video (Walkthrough):** [**watch the demo video on drive 🔗**](https://drive.google.com/file/d/1W5b7_8em4_AmtY9EjspGPbVsTO1qK53_/view?usp=sharing)
+- **See on LinkedIn:** []()
 
 
 
