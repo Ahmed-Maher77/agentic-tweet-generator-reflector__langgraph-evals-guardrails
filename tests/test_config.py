@@ -69,15 +69,17 @@ class TestSettingsValidation:
     """Test Settings validation constraints."""
 
     def test_missing_api_key_raises(self, monkeypatch: pytest.MonkeyPatch) -> None:
-        """Settings must require either OPENAI_API_KEY or GROQ_API_KEY."""
+        """Settings must require OPENAI_API_KEY, GROQ_API_KEY, or COHERE_API_KEY."""
         monkeypatch.delenv("OPENAI_API_KEY", raising=False)
         monkeypatch.delenv("GROQ_API_KEY", raising=False)
+        monkeypatch.delenv("COHERE_API_KEY", raising=False)
         with pytest.raises((ValidationError, ValueError)):
             Settings(_env_file=None)  # type: ignore[call-arg]
 
     def test_groq_api_key_sets_groq_provider(self, monkeypatch: pytest.MonkeyPatch) -> None:
         """Providing GROQ_API_KEY without OpenAI key should auto-select Groq provider."""
         monkeypatch.delenv("OPENAI_API_KEY", raising=False)
+        monkeypatch.delenv("COHERE_API_KEY", raising=False)
         monkeypatch.setenv("GROQ_API_KEY", "gsk-test-groq-key")
         settings = Settings(_env_file=None)
         assert settings.llm_provider == "groq"
@@ -87,6 +89,18 @@ class TestSettingsValidation:
         assert settings.reviewer_model == "openai/gpt-oss-20b"
         assert settings.safety_model == "openai/gpt-oss-20b"
         assert settings.judge_model == "openai/gpt-oss-20b"
+
+    def test_cohere_api_key_sets_cohere_provider(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        """Providing COHERE_API_KEY alone should auto-select Cohere provider."""
+        monkeypatch.delenv("OPENAI_API_KEY", raising=False)
+        monkeypatch.delenv("GROQ_API_KEY", raising=False)
+        monkeypatch.setenv("COHERE_API_KEY", "test-cohere-key")
+        settings = Settings(_env_file=None)
+        assert settings.llm_provider == "cohere"
+        assert settings.effective_api_key.get_secret_value() == "test-cohere-key"
+        assert settings.effective_base_url == "https://api.cohere.com/compatibility/v1"
+        assert settings.writer_model == "command-r-08-2024"
+        assert settings.reviewer_model == "command-r-08-2024"
 
     def test_temperature_below_zero_raises(self) -> None:
         with pytest.raises(ValidationError):

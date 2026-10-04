@@ -10,6 +10,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.config import get_settings
 from app.graph.state import TweetState
 from app.graph.workflow import create_tweet_graph
+from app.guardrails.clarification import analyze_prompt_clarifications
+from app.guardrails.input import validate_input
 from app.logging_config import get_logger, setup_logging
 from app.models.schemas import AttemptRecord, TweetGenerationRequest, TweetGenerationResponse
 
@@ -72,8 +74,6 @@ async def generate_tweet_endpoint(
     global _compiled_graph
     settings = get_settings()
 
-    graph = _compiled_graph or create_tweet_graph(settings=settings)
-
     max_att = (
         request.max_attempts
         if request.max_attempts is not None
@@ -90,20 +90,80 @@ async def generate_tweet_endpoint(
         else settings.search_enabled
     )
 
+    # 1. Run input security and injection guardrails first
+    input_check = validate_input(request.query, settings=settings)
+    if not input_check.passed:
+        logger.warning("api_input_guardrail_rejected", reason=input_check.reason)
+        return TweetGenerationResponse(
+            status="INPUT_BLOCKED",
+            tweet="",
+            attempts=0,
+            reflection_enabled=refl_enabled,
+            search_used=False,
+            input_blocked=True,
+            output_blocked=False,
+            block_reason=input_check.reason,
+        )
+
+    # 2. Check if user prompt is underspecified and requires missing details
+    if not request.skip_clarification and not request.clarifications:
+        clarification_result = analyze_prompt_clarifications(
+            request.query,
+            settings=settings,
+        )
+        if clarification_result.needs_clarification and len(clarification_result.questions) > 0:
+            logger.info(
+                "prompt_clarification_requested",
+                questions_count=len(clarification_result.questions),
+                reason=clarification_result.reason,
+            )
+            return TweetGenerationResponse(
+                status="NEEDS_CLARIFICATION",
+                tweet="",
+                attempts=0,
+                reflection_enabled=refl_enabled,
+                search_used=False,
+                clarifications_needed=clarification_result.questions,
+                clarification_reason=clarification_result.reason or "A few details will help generate an accurate tweet without making assumptions.",
+            )
+
+    # 2. Enrich prompt with user-provided clarification answers (if any)
+    effective_query = request.query
+    if request.clarifications:
+        details_list = [
+            f"- {k.replace('_', ' ').title()}: {v.strip()}"
+            for k, v in request.clarifications.items()
+            if v and v.strip()
+        ]
+        if details_list:
+            effective_query = f"{request.query}\n\nKey Details Provided by User:\n" + "\n".join(details_list)
+
     logger.info(
         "api_generation_request_received",
-        query_length=len(request.query),
+        query_length=len(effective_query),
         max_attempts=max_att,
         reflection_enabled=refl_enabled,
         search_enabled=srch_enabled,
     )
 
+    graph = _compiled_graph or create_tweet_graph(settings=settings)
+
     initial_state: TweetState = {
-        "user_query": request.query,
+        "user_query": effective_query,
         "max_attempts": max_att,
         "reflection_enabled": refl_enabled,
         "search_enabled": srch_enabled,
     }
+    if request.relevance_threshold is not None:
+        initial_state["relevance_threshold"] = request.relevance_threshold
+    if request.clarity_threshold is not None:
+        initial_state["clarity_threshold"] = request.clarity_threshold
+    if request.professionalism_threshold is not None:
+        initial_state["professionalism_threshold"] = request.professionalism_threshold
+    if request.engagement_threshold is not None:
+        initial_state["engagement_threshold"] = request.engagement_threshold
+    if request.requirement_threshold is not None:
+        initial_state["requirement_threshold"] = request.requirement_threshold
 
     try:
         final_state = graph.invoke(initial_state)

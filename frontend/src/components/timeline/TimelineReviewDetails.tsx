@@ -1,63 +1,64 @@
 import React from 'react';
-import { AlertTriangle, MessageSquare } from 'lucide-react';
+import { PenTool, HelpCircle } from 'lucide-react';
 import { TimelineReviewDetailsProps } from '../../types';
 import { MetricPill } from '../MetricPill';
 
 export const TimelineReviewDetails: React.FC<TimelineReviewDetailsProps> = ({ review }) => {
+  const meaningfulIssues = (review.issues || []).filter((issue) => {
+    const text = issue.trim().toLowerCase();
+    return (
+      text.length > 0 &&
+      !text.includes('no significant issue') &&
+      !text.includes('no issue') &&
+      !text.includes('none') &&
+      !text.includes('all criteria met') &&
+      !text.includes('no revision')
+    );
+  });
+
   return (
-    <div className="mt-3 pt-2">
-      {/* Metric Row */}
-      <div className="row g-2 mb-3">
-        <div className="col-6 col-md">
-          <MetricPill label="Relevance" value={review.relevance} threshold={0.80} />
-        </div>
-        <div className="col-6 col-md">
-          <MetricPill label="Clarity" value={review.clarity} threshold={0.80} />
-        </div>
-        <div className="col-6 col-md">
-          <MetricPill label="Professional" value={review.professionalism} threshold={0.80} />
-        </div>
-        <div className="col-6 col-md">
-          <MetricPill label="Engagement" value={review.engagement} threshold={0.70} />
-        </div>
-        <div className="col-6 col-md">
-          <MetricPill label="Adherence" value={review.requirement_adherence} threshold={0.85} />
-        </div>
+    <div className="timeline-review-section mt-4">
+      {/* Reduced 5-Metric Strip */}
+      <div className="editorial-metrics-strip mb-4">
+        <MetricPill label="Relevance" value={review.relevance} threshold={0.80} />
+        <MetricPill label="Clarity" value={review.clarity} threshold={0.80} />
+        <MetricPill label="Tone" value={review.professionalism} threshold={0.80} />
+        <MetricPill label="Engagement" value={review.engagement} threshold={0.70} />
+        <MetricPill label="Adherence" value={review.requirement_adherence} threshold={0.85} />
       </div>
 
-      {/* Issues */}
-      {review.issues && review.issues.length > 0 && (
-        <div
-          className="mb-2 p-2 rounded"
-          style={{ background: 'var(--apple-warning-subtle)', border: '1px solid rgba(230, 126, 34, 0.2)' }}
-        >
-          <div className="d-flex align-items-center gap-1 text-warning mb-1" style={{ fontSize: '0.8rem', fontWeight: 600 }}>
-            <AlertTriangle size={13} />
-            <span>Issues:</span>
+      <div className="d-flex flex-column gap-2">
+        {/* Editor Feedback Memo (Clean minimal quote) */}
+        {review.feedback && (
+          <div className="editorial-memo-quote">
+            <div className="d-flex align-items-center gap-2 mb-1 text-primary">
+              <PenTool size={12} />
+              <span className="editorial-memo-title">Evaluation Note</span>
+            </div>
+            <p className="editorial-memo-body mb-0">
+              {review.feedback}
+            </p>
           </div>
-          <ul className="mb-0 ps-3 text-secondary" style={{ fontSize: '0.8rem' }}>
-            {review.issues.map((iss, i) => (
-              <li key={i}>{iss}</li>
-            ))}
-          </ul>
-        </div>
-      )}
+        )}
 
-      {/* Feedback */}
-      {review.feedback && (
-        <div
-          className="p-2 rounded"
-          style={{ background: 'var(--apple-surface-2)', border: '1px solid var(--apple-border)' }}
-        >
-          <div className="d-flex align-items-center gap-1 text-primary mb-1" style={{ fontSize: '0.8rem', fontWeight: 600 }}>
-            <MessageSquare size={13} />
-            <span>Reviewer Feedback:</span>
+        {/* Actionable Revisions (Only when real issues exist) */}
+        {meaningfulIssues.length > 0 && (
+          <div className="editorial-critique-quote">
+            <div className="d-flex align-items-center gap-2 mb-1 text-warning">
+              <HelpCircle size={13} className="flex-shrink-0" />
+              <span className="editorial-critique-title">Revisions Requested</span>
+            </div>
+            <ul className="editorial-critique-list mb-0">
+              {meaningfulIssues.map((issue, idx) => (
+                <li key={idx} className="editorial-critique-item">
+                  <span className="bullet-dot" />
+                  <span>{issue}</span>
+                </li>
+              ))}
+            </ul>
           </div>
-          <div style={{ fontSize: '0.82rem', color: 'var(--apple-text-primary)' }}>
-            {review.feedback}
-          </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 };

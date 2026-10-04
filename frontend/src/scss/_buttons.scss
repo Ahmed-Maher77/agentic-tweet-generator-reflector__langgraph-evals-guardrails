@@ -59,6 +59,40 @@
   }
 }
 
+// Icon-Only Ghost Action Button (borderless, normalized)
+.apple-icon-btn {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--apple-text-secondary);
+  width: 30px;
+  height: 30px;
+  min-width: 30px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+  transition: background-color 0.15s ease, color 0.15s ease, transform 0.1s ease;
+
+  &:hover:not(:disabled) {
+    background: var(--apple-surface-2);
+    color: var(--apple-text-primary);
+  }
+
+  &:active:not(:disabled) {
+    background: var(--apple-surface-3);
+    transform: scale(0.94);
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+}
+
 // Circular Send/Generate Action Button
 .apple-btn-circle {
   width: 36px;

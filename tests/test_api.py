@@ -59,6 +59,7 @@ class TestFastAPIEndpoints:
 
             payload = {
                 "query": "Announce our new open-source AI project",
+                "skip_clarification": True,
                 "max_attempts": 3,
                 "reflection_enabled": True,
             }
@@ -69,6 +70,41 @@ class TestFastAPIEndpoints:
             assert "Launching" in data["tweet"]
             assert data["attempts"] == 1
             assert len(data["attempt_history"]) == 1
+
+    def test_generate_endpoint_needs_clarification(self, client: TestClient, test_settings: Settings) -> None:
+        from app.guardrails.schemas import GuardrailCheckResult
+
+        with (
+            patch("app.api.main.validate_input", return_value=GuardrailCheckResult(passed=True, check_name="input_validation")),
+            patch("app.api.main.analyze_prompt_clarifications") as mock_clarify,
+        ):
+            from app.guardrails.clarification import ClarificationAnalysisResult
+            from app.models.schemas import ClarificationItem
+
+            mock_clarify.return_value = ClarificationAnalysisResult(
+                needs_clarification=True,
+                reason="Please provide package purpose.",
+                questions=[
+                    ClarificationItem(
+                        id="q1",
+                        question="What does it do?",
+                        placeholder="e.g. Async graph neural network",
+                        key="purpose",
+                        optional=False,
+                    )
+                ],
+            )
+
+            payload = {
+                "query": "I want to publish a package",
+                "skip_clarification": False,
+            }
+            response = client.post("/generate", json=payload)
+            assert response.status_code == 200
+            data = response.json()
+            assert data["status"] == "NEEDS_CLARIFICATION"
+            assert len(data["clarifications_needed"]) == 1
+            assert data["clarifications_needed"][0]["key"] == "purpose"
 
     def test_generate_endpoint_input_blocked(self, client: TestClient, test_settings: Settings) -> None:
         mock_final_state = {

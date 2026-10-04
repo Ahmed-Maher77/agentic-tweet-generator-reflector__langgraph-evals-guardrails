@@ -14,6 +14,8 @@ from app.config import Settings
 def _set_test_env(monkeypatch: pytest.MonkeyPatch) -> None:
     """Ensure tests never use real API keys by setting dummy keys and disable telemetry."""
     monkeypatch.setenv("OPENAI_API_KEY", "sk-test-fake-key-for-testing-only")
+    monkeypatch.delenv("GROQ_API_KEY", raising=False)
+    monkeypatch.delenv("COHERE_API_KEY", raising=False)
     monkeypatch.setenv("TAVILY_API_KEY", "tvly-fake-key-for-testing-only")
     monkeypatch.setenv("DEEPEVAL_TELEMETRY_OPT_OUT", "YES")
 

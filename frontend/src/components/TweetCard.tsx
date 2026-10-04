@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { Check, Copy, Share2, Globe } from 'lucide-react';
+import { Check, Copy, Share2, Globe, Edit3 } from 'lucide-react';
 import { TweetCardProps } from '../types';
 import { useTweetCard } from '../hooks/useTweetCard';
 import { StatusBadge } from './common/StatusBadge';
@@ -11,7 +11,9 @@ export const TweetCard: React.FC<TweetCardProps> = ({ response, onShowToast }) =
   const {
     copied,
     editableTweet,
-    setEditableTweet,
+    handleTweetChange,
+    handleKeyDown,
+    textareaRef,
     isEditing,
     toggleEditing,
     charLimit,
@@ -21,7 +23,7 @@ export const TweetCard: React.FC<TweetCardProps> = ({ response, onShowToast }) =
   } = useTweetCard(response, onShowToast);
 
   return (
-    <div className="tweet-showcase mb-4">
+    <div className="tweet-showcase">
       {/* Header Info */}
       <div className="d-flex align-items-center justify-content-between mb-3">
         <div className="tweet-author mb-0">
@@ -54,13 +56,20 @@ export const TweetCard: React.FC<TweetCardProps> = ({ response, onShowToast }) =
 
       {/* Tweet Body / Edit Box */}
       {isEditing ? (
-        <textarea
-          className="apple-textarea mb-3"
-          rows={4}
-          value={editableTweet}
-          onChange={(e) => setEditableTweet(e.target.value)}
-          aria-label="Edit tweet content"
-        />
+        <div className="tweet-edit-container mb-3">
+          <textarea
+            ref={textareaRef}
+            className="apple-textarea tweet-edit-textarea"
+            value={editableTweet}
+            onChange={handleTweetChange}
+            onKeyDown={handleKeyDown}
+            placeholder="Write your tweet..."
+            aria-label="Edit tweet content"
+          />
+          <div className="tweet-edit-hint">
+            <span>Press <kbd>Ctrl</kbd> + <kbd>Enter</kbd> to save</span>
+          </div>
+        </div>
       ) : (
         <div className="tweet-body mb-3">
           <ReactMarkdown
@@ -94,10 +103,12 @@ export const TweetCard: React.FC<TweetCardProps> = ({ response, onShowToast }) =
         <div className="d-flex align-items-center gap-2">
           <button
             type="button"
-            className="apple-btn apple-btn-secondary apple-btn-sm"
+            className={`apple-btn ${isEditing ? 'apple-btn-primary' : 'apple-btn-secondary'} apple-btn-sm`}
             onClick={toggleEditing}
+            title={isEditing ? 'Save and preview' : 'Edit tweet'}
           >
-            {isEditing ? 'Done' : 'Edit'}
+            {isEditing ? <Check size={13} /> : <Edit3 size={13} />}
+            <span>{isEditing ? 'Done' : 'Edit'}</span>
           </button>
 
           <button

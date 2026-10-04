@@ -63,6 +63,17 @@
       padding: 0.55rem 0;
     }
 
+    .theme-collapsed-btn {
+      width: 42px;
+      height: 42px;
+      padding: 0;
+      border-radius: $apple-radius-sm;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto;
+    }
+
     .theme-toggle-row {
       justify-content: center;
     }
@@ -91,7 +102,7 @@
   flex-grow: 1;
   overflow-y: auto;
   padding: 1.5rem;
-  padding-bottom: 7rem; /* Extra padding so content is not obscured by bottom dock */
+  padding-block: 2rem;
 
   @media (max-width: 768px) {
     padding: 1rem;

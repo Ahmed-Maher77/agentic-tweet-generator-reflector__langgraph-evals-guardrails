@@ -7,8 +7,44 @@
 [![Hugging Face](https://img.shields.io/badge/NLP%20Eval-Hugging%20Face-yellow.svg)](https://huggingface.co/docs/evaluate/index)
 [![FastAPI](https://img.shields.io/badge/API-FastAPI-green.svg)](https://fastapi.tiangolo.com/)
 [![React](https://img.shields.io/badge/Frontend-React%20%2B%20Vite%20%2B%20TS-blue.svg)](https://vitejs.dev/)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect%20%2F%20Post-0A66C2.svg?logo=linkedin&logoColor=white)]()
+[![Demo Video](https://img.shields.io/badge/Demo%20Video-Watch%20Walkthrough-FF0000.svg?logo=youtube&logoColor=white)](https://drive.google.com/file/d/1W5b7_8em4_AmtY9EjspGPbVsTO1qK53_/view?usp=sharing)
 
 A production-grade, stateful AI system that generates high-quality, authentic X/Twitter posts from user prompts and iteratively refines them through an **LLM-based reflection/review loop** orchestrated with **LangGraph**, real-time **Web Search Grounding** (Tavily + DuckDuckGo fallback), 3-tier **Safety & Tool Guardrails**, and an enterprise-grade **Multi-Framework AI Evaluation Suite** (**DeepEval** + **Ragas** + **Hugging Face Evaluate**).
+
+---
+
+## 🎬 Live Demo & Video Walkthrough
+
+- **Watch Demo Video (Walkthrough):** [**watch the demo video on drive 🔗**](https://drive.google.com/file/d/1W5b7_8em4_AmtY9EjspGPbVsTO1qK53_/view?usp=sharing)
+
+
+
+<div align="center">
+  <br />
+  <img width="850" alt="AI Tweet Studio UI Mockup" src="docs/assets/ui_mockup.png" onerror="this.src='https://placehold.co/850x450/1e293b/38bdf8?text=Place+UI+Mockup+Image+at+docs/assets/ui_mockup.png';" style="border-radius: 12px; box-shadow: 0 8px 30px rgba(0,0,0,0.15);" />
+  <br /><br />
+  <em>AI Tweet Studio — Web Application Interface</em>
+</div>
+
+---
+
+## 🛠️ Technologies & Tech Stack
+
+| Category | Technologies / Libraries | Role & Implementation |
+| :--- | :--- | :--- |
+| **Agent & Workflow Orchestration** | `LangGraph`, `LangChain Core` | Stateful cyclic graph, conditional routing, loop cycle control, state reducers |
+| **LLM Inference & Providers** | `OpenAI (GPT-4o)`, `Groq (Llama-3.3-70b)`, `Cohere` | Primary multi-provider support with automated fallback routing & structured JSON schemas |
+| **AI Evaluation Frameworks** | `DeepEval`, `Ragas`, `Hugging Face Evaluate` | Multi-framework offline benchmarking (G-Eval rubrics, faithfulness, BLEU/ROUGE, constraint compliance) |
+| **Web Search Grounding** | `Tavily AI Search API`, `DuckDuckGo (DDGS)` | Real-time fact grounding with primary/fallback search engine integration |
+| **Backend Framework** | `FastAPI`, `Uvicorn`, `Python 3.11+` | Asynchronous high-throughput REST API, OpenAPI docs, typed request/response contracts |
+| **Data Validation & Settings** | `Pydantic v2`, `pydantic-settings` | Domain schemas, DTO validation, and environment configuration management |
+| **Frontend Framework** | `React 18`, `TypeScript 5`, `Vite 5` | Single-Page Application (SPA) with real-time feedback and state persistence |
+| **Styling & Design System** | `Sass (SCSS)`, `Apple HIG Tokens` | Custom glassmorphism design system, responsive grid layout, dynamic dark/light mode |
+| **UI Components & Utilities** | `Lucide React`, `Canvas Confetti`, `React Markdown` | Modern iconography, celebrations, and Markdown tweet rendering |
+| **Observability & Logging** | `LangSmith`, `Structlog` | Full workflow execution tracing, tool run inspection, latency metrics, and structured JSON logs |
+| **Testing & Quality Assurance** | `Pytest`, `Pytest-Asyncio`, `Ruff`, `Mypy` | 100% mocked automated tests (111 tests), strict linting, and static type checking |
+| **Containerization & Tooling** | `Docker`, `Docker Compose`, `uv` | High-speed dependency resolver and reproducible multi-container deployment |
 
 ---
 
@@ -166,10 +202,11 @@ Copy `.env.example` to `.env` and configure your API keys:
 cp .env.example .env
 ```
 
-**Option A: Groq Configuration (Ultra-fast inference & high throughput):**
+**Option A: Groq Configuration (with automatic Cohere fallback if Groq encounters rate/network errors):**
 ```env
-LLM_PROVIDER=groq
+LLM_PROVIDER=auto
 GROQ_API_KEY=gsk_your-groq-api-key
+COHERE_API_KEY=your-cohere-api-key  # Transparent automatic fallback
 WRITER_MODEL=openai/gpt-oss-20b
 REVIEWER_MODEL=openai/gpt-oss-20b
 SAFETY_MODEL=openai/gpt-oss-20b
@@ -179,7 +216,17 @@ JUDGE_MODEL=openai/gpt-oss-20b
 TAVILY_API_KEY=tvly-your-tavily-key
 ```
 
-**Option B: OpenAI Configuration:**
+**Option B: Cohere Configuration (Direct primary provider):**
+```env
+LLM_PROVIDER=cohere
+COHERE_API_KEY=your-cohere-api-key
+WRITER_MODEL=command-r-08-2024
+REVIEWER_MODEL=command-r-08-2024
+SAFETY_MODEL=command-r-08-2024
+JUDGE_MODEL=command-r-08-2024
+```
+
+**Option C: OpenAI Configuration:**
 ```env
 LLM_PROVIDER=openai
 OPENAI_API_KEY=sk-your-openai-key
@@ -190,6 +237,14 @@ JUDGE_MODEL=gpt-4o-mini
 
 # Optional: Tavily API Key for real-time web search grounding (falls back to DuckDuckGo if omitted)
 TAVILY_API_KEY=tvly-your-tavily-key
+```
+
+**Observability: LangSmith Tracing:**
+```env
+LANGSMITH_TRACING=true
+LANGSMITH_API_KEY=lsv2_pt_your-key
+LANGSMITH_PROJECT=ai-agentic-test
+LANGSMITH_ENDPOINT=https://api.smith.langchain.com
 ```
 
 ---
@@ -305,8 +360,12 @@ AI-Tweet-Generator-Assistant/
 │   │   │   ├── sidebar/ # SidebarHeader, SidebarNav, SidebarRecentList, SidebarFooter
 │   │   │   ├── tweet/   # EngagementButtons
 │   │   │   ├── timeline/# TimelineReviewDetails
-│   │   │   └── settings/# RubricSlider
-│   │   ├── hooks/       # Custom hooks separating logic (usePromptEditor, useTweetCard, etc.)
+│   │   │   ├── settings/# RubricSlider
+│   │   │   ├── AmbientLoading.tsx  # Ambient background-integrated loading state
+│   │   │   ├── MetricPill.tsx      # Minimalist quality score bar
+│   │   │   ├── Timeline.tsx        # Vertical connected iteration timeline
+│   │   │   └── ...
+│   │   ├── hooks/       # Custom hooks separating logic (usePromptEditor, useTweetCard, useSessionPersistence, etc.)
 │   │   ├── scss/        # Apple HIG styling tokens, theme definitions, and layout
 │   │   ├── types/       # Centralized TypeScript definitions
 │   │   ├── App.tsx      # Main application container
@@ -324,7 +383,17 @@ AI-Tweet-Generator-Assistant/
 
 ---
 
-## 🎨 Design System
+## 🎨 Frontend UI & User Experience
+
+The web interface is built with React, TypeScript, Vite, and custom SCSS following modern minimalist and Apple HIG design principles:
+
+- **Focus Mode & Dynamic Workspace**: Starting a conversation or selecting history automatically collapses initial onboarding cards (*Agent Pipeline* and *Need inspiration?*), reserving the full viewport for the active drafting workflow.
+- **Seamless Prompt Auto-Clearing**: Submitting a prompt immediately clears the input field while tracking the generation state.
+- **Ambient Glowing Loader**: The loading state avoids boxed containers, integrating directly into the page backdrop with fluid pulsing gradients and step-by-step progress status.
+- **Vertical Connected Iteration Timeline**: Every reflection attempt is rendered as a milestone along a vertical connector line with subtle status badges, unboxed evaluation quotes, and expandable metadata.
+- **Unboxed Quality Metric Strips**: Minimalist score bars for Relevance, Clarity, Professionalism, Engagement, and Requirement Adherence without cluttered nested containers or redundant labels.
+- **Adaptive Theme System**: Full Dark and Light mode support with a streamlined, centered toggle when the sidebar is collapsed.
+
 For a comprehensive breakdown of all UI tokens, color palettes, typography scales, layout mechanics, and component specifications, see [`docs/DESIGN_SYSTEM.md`](docs/DESIGN_SYSTEM.md).
 
 ---

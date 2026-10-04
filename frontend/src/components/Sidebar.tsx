@@ -77,7 +77,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
         />
 
         {/* Bottom Theme Controls */}
-        <SidebarFooter theme={theme} onToggleTheme={onToggleTheme} />
+        <SidebarFooter
+          theme={theme}
+          onToggleTheme={onToggleTheme}
+          isCollapsed={isCollapsed}
+        />
       </aside>
     </>
   );

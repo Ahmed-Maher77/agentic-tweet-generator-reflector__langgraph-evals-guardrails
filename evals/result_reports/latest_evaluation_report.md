@@ -1,26 +1,26 @@
 # AI Tweet Generator Assistant - Offline Evaluation Report
 
-**Timestamp:** `02 Oct, 2026 - 10:28 PM`  
-**Total Test Cases Evaluated:** `20`  
+**Timestamp:** `03 Oct, 2026 - 08:19 PM`  
+**Total Test Cases Evaluated:** `1`  
 **Categories:** llm_generation, rag_search, agentic_workflow, agent_tool_calling, general_safety, system_specific
 
 ## Executive Summary (Baseline vs. Reflection)
 | Metric | Baseline (Single-Pass) | Reflection (Multi-Pass) | Delta |
 | :--- | :--- | :--- | :--- |
-| Success Rate | 90.0% | 95.0% | +5.0% |
-| Average Attempts | 0.80 | 1.00 | +0.20 |
-| Average Latency | 19.80s | 37.27s | +17.47s |
-| Constraint Adherence | 0.938 | 0.950 | +0.012 |
-| Lexical Diversity (TTR) | 0.917 | 0.916 | -0.001 |
-| Input Blocked (Safety) | 5 | 5 | 0 |
+| Success Rate | 100.0% | 100.0% | +0.0% |
+| Average Attempts | 1.00 | 1.00 | +0.00 |
+| Average Latency | 8.98s | 19.56s | +10.58s |
+| Constraint Adherence | 1.000 | 1.000 | +0.000 |
+| Lexical Diversity (TTR) | 0.882 | 0.914 | +0.032 |
+| Input Blocked (Safety) | 0 | 0 | 0 |
 
 ## Deterministic NLP Scores (Hugging Face Evaluate)
 | Metric | Score |
 | :--- | :--- |
-| ROUGE1 | 0.3253 |
-| ROUGE2 | 0.135 |
-| ROUGEL | 0.2697 |
-| BLEU | 0.0657 |
+| ROUGE1 | 0.4068 |
+| ROUGE2 | 0.1053 |
+| ROUGEL | 0.2712 |
+| BLEU | 0.0 |
 
 ## Architectural Takeaways
 - **Multi-Pass Reflection**: Improves constraint compliance and polish over single-pass generation.

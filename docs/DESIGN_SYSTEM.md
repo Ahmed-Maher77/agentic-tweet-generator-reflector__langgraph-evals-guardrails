@@ -127,9 +127,11 @@ The typographic system utilizes modern geometric sans-serif typefaces tailored f
 - **`MobileTopbar`**: Clean responsive topbar for viewports `< 992px`.
 
 ### 5.2 Focused Presentational Components
-- **`PromptEditor`**: Floating bottom input pill (`.bottom-chat-container`, `max-width: 820px`) with auto-expanding textarea and circular send button (`.apple-btn-circle`).
+- **`PromptEditor`**: Floating bottom input pill (`.bottom-chat-container`, `max-width: 820px`) with auto-expanding textarea, instant query clearing upon dispatch, and circular send button (`.apple-btn-circle`).
+- **`AmbientLoading`**: Borderless, background-integrated loading canvas with luminous ambient glow orbs, rotating progress status descriptors, and subtle gradient shimmer track.
 - **`TweetCard`**: Authentic social post card with markdown support, author metadata, character counter, edit mode, copy-to-clipboard, share to X, and `EngagementButtons`.
-- **`Timeline`**: Accordion iteration viewer with `StatusBadge` and `TimelineReviewDetails` (Metric pills, evaluator issues list, reviewer feedback quote).
+- **`Timeline`**: Streamlined vertical connected timeline with indicator dot milestones (pass/revise) and line connectors linking iterative draft attempts.
+- **`TimelineReviewDetails`**: Minimalist quality scorecard featuring an open 5-criteria metrics strip (`Relevance`, `Clarity`, `Tone`, `Engagement`, `Adherence`) and unboxed editorial quote memo notes.
 - **`SettingsDrawer`**: Inspector settings drawer composing `RubricSlider` controls and reflection / web search toggles.
 - **`SystemDetailsModal`**: Architecture overview modal detailing the single-agent writer, reflection reviewer, guardrails, and stateful loop.
 
@@ -141,12 +143,14 @@ All components follow the **Presenter-Container** pattern, delegating side effec
 
 | Custom Hook | Module | Logic Encapsulated |
 | :--- | :--- | :--- |
+| `useTweetGenerator` | `hooks/useTweetGenerator.ts` | Primary state coordinator managing API invocations, response history, system health monitoring, and settings persistence. |
 | `usePromptEditor` | `hooks/usePromptEditor.ts` | Auto-resizing textarea calculation, `Enter` submission, and `Shift+Enter` multi-line handling. |
 | `useTweetCard` | `hooks/useTweetCard.ts` | Edit mode toggles, clipboard copy with feedback timer, character counting, and share intent formatting. |
-| `useTimeline` | `hooks/useTimeline.ts` | Accordion item expansion and collapse state. |
 | `useTypewriter` | `hooks/useTypewriter.ts` | Phrase rotation, character typing/deleting intervals, pause durations, and unmount timer cleanup. |
-| `useEngagement` | `hooks/useEngagement.ts` | Like count and bookmark toggle states. |
+| `useEngagement` | `hooks/useEngagement.ts` | Simulated like count and bookmark toggle states. |
 | `useAppModals` | `hooks/useAppModals.ts` | Inspector settings, history archive, system features modal, and responsive mobile sidebar open/close states. |
+| `useHistory` | `hooks/useHistory.ts` | LocalStorage persistence, item retrieval, and history management. |
+| `useTheme` | `hooks/useTheme.ts` | System preference detection, dark/light theme toggling, and data attribute synchronization. |
 | `useEscapeKey` | `hooks/useEscapeKey.ts` | Global keyboard <kbd>Escape</kbd> event listener management with automatic listener cleanup. |
 
 All TypeScript types and interfaces are centralized in [`frontend/src/types/index.ts`](file:///e:/OneDrive/Courses/AI%20Agentic/Practice/AI%20Tweet%20Generator%20Assistant/frontend/src/types/index.ts).

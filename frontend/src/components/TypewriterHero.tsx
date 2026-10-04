@@ -22,7 +22,7 @@ export const TypewriterHero: React.FC<TypewriterHeroProps> = ({ hasResult, isLoa
   });
 
   return (
-    <div className={`text-center ${hasResult ? 'mb-3' : 'my-4 py-2'}`}>
+    <div className={`text-center ${hasResult ? 'mb-5' : 'my-4 py-2'}`}>
       <h1
         className="fw-bold mb-2"
         style={{

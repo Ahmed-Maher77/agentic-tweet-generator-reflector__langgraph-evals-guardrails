@@ -54,3 +54,50 @@
     line-height: 24px;
   }
 }
+
+// User Prompt Conversation Bubble (Borderless, Transparent, Normalized Apple HIG)
+.user-query-card {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 0.5rem 0.25rem 1.15rem;
+  box-shadow: none;
+  margin-bottom: 0.75rem;
+}
+
+.user-query-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--apple-surface-2);
+  color: var(--apple-text-secondary);
+  border: 1px solid var(--apple-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: none;
+}
+
+.user-query-author {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--apple-text-primary);
+  letter-spacing: -0.01em;
+}
+
+.user-query-text {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--apple-text-primary);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.user-query-actions {
+  opacity: 0.6;
+  transition: opacity 0.15s ease;
+
+  &:hover {
+    opacity: 1;
+  }
+}

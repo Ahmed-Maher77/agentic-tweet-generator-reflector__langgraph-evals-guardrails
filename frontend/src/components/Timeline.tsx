@@ -1,84 +1,67 @@
 import React from 'react';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
-import { ChevronDown, ChevronUp } from 'lucide-react';
+import { Layers, Check, RotateCw } from 'lucide-react';
 import { TimelineProps } from '../types';
-import { useTimeline } from '../hooks/useTimeline';
 import { StatusBadge } from './common/StatusBadge';
 import { TimelineReviewDetails } from './timeline/TimelineReviewDetails';
 
-export const Timeline: React.FC<TimelineProps> = ({ attempts, reflectionEnabled }) => {
-  const { expandedIndex, toggleExpand } = useTimeline(attempts);
-
+export const Timeline: React.FC<TimelineProps> = ({ attempts }) => {
   if (!attempts || attempts.length === 0) return null;
 
   return (
-    <div className="apple-card p-3 mb-4">
+    <div className="vertical-timeline-wrapper mb-4">
+      {/* Timeline Header */}
       <div className="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom border-opacity-10">
-        <div>
-          <h6 className="fw-semibold mb-0" style={{ fontSize: '0.95rem' }}>
-            Iteration History ({attempts.length} {attempts.length === 1 ? 'Attempt' : 'Attempts'})
+        <div className="d-flex align-items-center gap-2">
+          <Layers size={15} className="text-primary" />
+          <h6 className="fw-semibold mb-0" style={{ fontSize: '0.9rem' }}>
+            Iteration Timeline
           </h6>
-          <span className="text-secondary" style={{ fontSize: '0.8rem' }}>
-            {reflectionEnabled ? 'Evaluator review breakdown per attempt' : 'Single-pass baseline'}
-          </span>
         </div>
+        <span className="text-secondary" style={{ fontSize: '0.76rem' }}>
+          {attempts.length} {attempts.length === 1 ? 'Attempt' : 'Attempts'}
+        </span>
       </div>
 
-      <div>
+      {/* Vertical Connected Timeline Track */}
+      <div className="vertical-timeline-track">
         {attempts.map((item, index) => {
-          const isExpanded = expandedIndex === index;
-          const isFinal = index === attempts.length - 1;
-          const review = item.review;
+          const isLast = index === attempts.length - 1;
+          const isPassed = item.passed;
 
           return (
-            <div key={index} className="timeline-item">
-              <div
-                className="d-flex align-items-center justify-content-between"
-                style={{ cursor: 'pointer' }}
-                onClick={() => toggleExpand(index)}
-              >
-                <div className="d-flex align-items-center gap-2">
-                  <span className="fw-medium" style={{ fontSize: '0.9rem' }}>
-                    Attempt {item.attempt}
-                  </span>
-                  <StatusBadge status={item.passed ? 'PASS' : 'REVISE'} size="sm" />
-                  {isFinal && <StatusBadge status="SELECTED" size="sm" />}
+            <div key={index} className={`timeline-step-row ${isLast ? 'is-last' : ''}`}>
+              {/* Left Axis: Dot & Connector Line */}
+              <div className="timeline-step-axis">
+                <div className={`timeline-step-dot ${isPassed ? 'passed' : 'revise'}`}>
+                  {isPassed ? <Check size={10} strokeWidth={3} /> : <RotateCw size={9} />}
                 </div>
-
-                <div className="d-flex align-items-center gap-2 text-secondary" style={{ fontSize: '0.8rem' }}>
-                  <span>{item.tweet.length} chars</span>
-                  {isExpanded ? <ChevronUp size={15} /> : <ChevronDown size={15} />}
-                </div>
+                {!isLast && <div className="timeline-step-line" />}
               </div>
 
-              {/* Tweet Content: Plain snippet when collapsed, rendered Markdown when expanded */}
-              {!isExpanded ? (
-                <div className="text-secondary mt-1" style={{ fontSize: '0.85rem' }}>
-                  "{item.tweet.length > 100 ? `${item.tweet.substring(0, 100)}...` : item.tweet}"
+              {/* Right Content */}
+              <div className="timeline-step-content pb-3">
+                <div className="d-flex align-items-center justify-content-between mb-1.5">
+                  <div className="d-flex align-items-center gap-2">
+                    <span className="fw-semibold" style={{ fontSize: '0.85rem' }}>
+                      Attempt {item.attempt} {isLast && attempts.length > 1 ? '(Final)' : ''}
+                    </span>
+                    <StatusBadge status={isPassed ? 'PASS' : 'REVISE'} size="sm" />
+                  </div>
+                  <span className="text-secondary" style={{ fontSize: '0.74rem' }}>
+                    {item.tweet.length} chars
+                  </span>
                 </div>
-              ) : (
-                <div
-                  className="tweet-body mt-2 p-2 rounded"
-                  style={{
-                    background: 'var(--apple-surface-2)',
-                    border: '1px solid var(--apple-border)',
-                    fontSize: '0.92rem',
-                  }}
-                >
-                  <ReactMarkdown
-                    remarkPlugins={[remarkGfm]}
-                    components={{
-                      a: ({ ...props }) => <a {...props} target="_blank" rel="noopener noreferrer" />,
-                    }}
-                  >
-                    {item.tweet}
-                  </ReactMarkdown>
-                </div>
-              )}
 
-              {/* Expanded details */}
-              {isExpanded && review && <TimelineReviewDetails review={review} />}
+                {/* If previous attempt draft was revised, show draft text snippet */}
+                {!isLast && (
+                  <div className="timeline-draft-snippet mb-2">
+                    "{item.tweet}"
+                  </div>
+                )}
+
+                {/* Quality Scorecard and Feedback */}
+                {item.review && <TimelineReviewDetails review={item.review} />}
+              </div>
             </div>
           );
         })}

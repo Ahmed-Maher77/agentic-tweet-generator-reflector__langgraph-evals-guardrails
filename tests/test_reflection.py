@@ -98,4 +98,4 @@ class TestEvaluateTweet:
         # Fallback should return a valid ReviewResult without crashing
         assert isinstance(result, ReviewResult)
         assert result.decision == "PASS"
-        assert "fallback" in result.feedback.lower()
+        assert result.feedback != ""

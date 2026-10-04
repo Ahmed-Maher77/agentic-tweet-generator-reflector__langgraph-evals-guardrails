@@ -1,4 +1,4 @@
-// Normalized subtle animations
+// Normalized subtle animations & ambient effects
 
 @keyframes spinSmooth {
   0% {
@@ -9,6 +9,65 @@
   }
 }
 
+@keyframes ambientPulse {
+  0%, 100% {
+    opacity: 0.6;
+    transform: scale(0.98);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.02);
+  }
+}
+
+@keyframes ambientGlowOrb {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.45;
+  }
+  33% {
+    transform: translate(15px, -10px) scale(1.1);
+    opacity: 0.75;
+  }
+  66% {
+    transform: translate(-12px, 8px) scale(0.95);
+    opacity: 0.55;
+  }
+}
+
+@keyframes shimmerWave {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes textFadeInOut {
+  0%, 100% {
+    opacity: 0.8;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
 .animate-spin-smooth {
   animation: spinSmooth 0.8s linear infinite;
+}
+
+.animate-ambient-pulse {
+  animation: ambientPulse 3s ease-in-out infinite;
+}
+
+.animate-shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.08) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmerWave 2s infinite;
 }
