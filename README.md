@@ -22,7 +22,7 @@ A production-grade, stateful AI system that generates high-quality, authentic X/
 
 <div align="center">
   <br />
-  <img width="850" alt="AI Tweet Studio UI Mockup" src="docs/assets/ui_mockup.png" onerror="this.src='https://placehold.co/850x450/1e293b/38bdf8?text=Place+UI+Mockup+Image+at+docs/assets/ui_mockup.png';" style="border-radius: 12px; box-shadow: 0 8px 30px rgba(0,0,0,0.15);" />
+  <img width="850" alt="AI Tweet Studio UI Mockup" src="https://github.com/user-attachments/assets/97be4f31-9068-42b2-91c0-3f673171281e" onerror="this.src='https://placehold.co/850x450/1e293b/38bdf8?text=Place+UI+Mockup+Image+at+docs/assets/ui_mockup.png';" style="border-radius: 12px; box-shadow: 0 8px 30px rgba(0,0,0,0.15);" />
   <br /><br />
   <em>AI Tweet Studio — Web Application Interface</em>
 </div>
