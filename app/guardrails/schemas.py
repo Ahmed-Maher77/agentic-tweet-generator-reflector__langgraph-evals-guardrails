@@ -29,38 +29,24 @@ class OutputJudgeEvaluation(BaseModel):
     """Structured evaluation returned by the LLM-as-a-Judge for semantic output quality."""
 
     relevance: float = Field(
-        ge=0.0,
-        le=1.0,
         description="Score (0.0 to 1.0) evaluating relevance to the requested user topic.",
     )
     instruction_adherence: float = Field(
-        ge=0.0,
-        le=1.0,
         description="Score (0.0 to 1.0) evaluating adherence to constraints, style, and instructions.",
     )
     clarity: float = Field(
-        ge=0.0,
-        le=1.0,
         description="Score (0.0 to 1.0) evaluating readability, grammar, and clear phrasing.",
     )
     coherence: float = Field(
-        ge=0.0,
-        le=1.0,
         description="Score (0.0 to 1.0) evaluating logical flow, consistency, and structural unity.",
     )
     tone: float = Field(
-        ge=0.0,
-        le=1.0,
         description="Score (0.0 to 1.0) evaluating appropriateness and engaging professional tone.",
     )
     factuality: float = Field(
-        ge=0.0,
-        le=1.0,
         description="Score (0.0 to 1.0) evaluating factual plausibility and absence of unsupported/hallucinated claims.",
     )
     overall_quality: float = Field(
-        ge=0.0,
-        le=1.0,
         description="Score (0.0 to 1.0) representing overall holistic tweet quality.",
     )
     reasoning: str = Field(
