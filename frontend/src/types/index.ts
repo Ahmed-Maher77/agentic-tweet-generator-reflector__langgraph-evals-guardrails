@@ -25,17 +25,33 @@ export interface AttemptRecord {
   passed: boolean;
 }
 
+export interface ClarificationItem {
+  id: string;
+  question: string;
+  placeholder: string;
+  key: string;
+  optional?: boolean;
+}
+
 export type GenerationStatus =
   | 'SUCCESS'
+  | 'NEEDS_CLARIFICATION'
   | 'INPUT_BLOCKED'
   | 'OUTPUT_BLOCKED'
   | 'MAX_ATTEMPTS_REACHED';
 
 export interface TweetGenerationRequest {
   query: string;
+  skip_clarification?: boolean;
+  clarifications?: Record<string, string>;
   max_attempts?: number;
   reflection_enabled?: boolean;
   search_enabled?: boolean;
+  relevance_threshold?: number;
+  clarity_threshold?: number;
+  professionalism_threshold?: number;
+  engagement_threshold?: number;
+  requirement_threshold?: number;
 }
 
 export interface TweetGenerationResponse {
@@ -49,6 +65,8 @@ export interface TweetGenerationResponse {
   input_blocked: boolean;
   output_blocked: boolean;
   block_reason?: string | null;
+  clarifications_needed?: ClarificationItem[];
+  clarification_reason?: string | null;
 }
 
 export interface SystemHealth {

@@ -80,26 +80,44 @@ export function useTweetGenerator() {
     });
   };
 
-  const handleGenerate = async (query: string) => {
-    if (!query.trim() || isLoading) return;
+  const handleGenerate = async (
+    query: string,
+    options?: {
+      skipClarification?: boolean;
+      clarifications?: Record<string, string>;
+    }
+  ) => {
+    const targetQuery = query.trim() || lastQuery.trim();
+    if (!targetQuery || isLoading) return;
 
     setIsLoading(true);
-    setLastQuery(query);
+    setLastQuery(targetQuery);
 
     try {
       const res = await generateTweet({
-        query: query.trim(),
+        query: targetQuery,
+        skip_clarification: options?.skipClarification ?? false,
+        clarifications: options?.clarifications,
         max_attempts: settings.maxAttempts,
         reflection_enabled: settings.reflectionEnabled,
         search_enabled: settings.searchEnabled,
+        relevance_threshold: settings.relevanceThreshold,
+        clarity_threshold: settings.clarityThreshold,
+        professionalism_threshold: settings.professionalismThreshold,
+        engagement_threshold: settings.engagementThreshold,
+        requirement_threshold: settings.adherenceThreshold,
       });
 
       setCurrentResponse(res);
-      addEntry(query, res);
+      if (res.status !== 'NEEDS_CLARIFICATION') {
+        addEntry(targetQuery, res);
+      }
 
       if (res.status === 'SUCCESS') {
         showToast(`Tweet approved in ${res.attempts} iteration(s)!`, 'success');
         triggerCelebration();
+      } else if (res.status === 'NEEDS_CLARIFICATION') {
+        showToast('Please provide a few key details to avoid assumptions', 'info');
       } else if (res.status === 'MAX_ATTEMPTS_REACHED') {
         showToast('Max iterations reached. Best draft selected.', 'warning');
       } else if (res.input_blocked) {
@@ -115,10 +133,23 @@ export function useTweetGenerator() {
     }
   };
 
+  const handleClarificationsSubmit = (clarifications: Record<string, string>) => {
+    handleGenerate(lastQuery, { clarifications });
+  };
+
+  const handleSkipClarifications = () => {
+    handleGenerate(lastQuery, { skipClarification: true });
+  };
+
   const loadFromHistory = (item: { query: string; response: TweetGenerationResponse }) => {
     setLastQuery(item.query);
     setCurrentResponse(item.response);
     showToast('Loaded past generation from history', 'info');
+  };
+
+  const resetToNew = () => {
+    setCurrentResponse(null);
+    setLastQuery('');
   };
 
   return {
@@ -132,7 +163,10 @@ export function useTweetGenerator() {
     clearHistory,
     removeEntry,
     handleGenerate,
+    handleClarificationsSubmit,
+    handleSkipClarifications,
     loadFromHistory,
+    resetToNew,
     toast,
     showToast,
   };

@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { RefreshCw } from 'lucide-react';
 import { useTheme } from './hooks/useTheme';
 import { useTweetGenerator } from './hooks/useTweetGenerator';
 import { useAppModals } from './hooks/useAppModals';
@@ -15,6 +14,9 @@ import { TypewriterHero } from './components/TypewriterHero';
 import { StatusToast } from './components/StatusToast';
 import { MobileTopbar } from './components/common/MobileTopbar';
 import { GuardrailAlert } from './components/common/GuardrailAlert';
+import { UserPromptBubble } from './components/common/UserPromptBubble';
+import { ClarificationCard } from './components/common/ClarificationCard';
+import { AmbientLoading } from './components/AmbientLoading';
 import { HistoryEntry } from './types';
 
 export function App() {
@@ -42,13 +44,17 @@ export function App() {
     health,
     isLoading,
     currentResponse,
+    lastQuery,
     settings,
     updateSettings,
     history,
     clearHistory,
     removeEntry,
     handleGenerate,
+    handleClarificationsSubmit,
+    handleSkipClarifications,
     loadFromHistory,
+    resetToNew,
     toast,
     showToast,
   } = useTweetGenerator();
@@ -59,18 +65,27 @@ export function App() {
   };
 
   const handleHistorySelection = (item: HistoryEntry) => {
-    setUserQuery(item.query);
+    setUserQuery('');
     loadFromHistory(item);
   };
 
   const handleNewTweet = () => {
     setUserQuery('');
+    resetToNew();
     showToast('Ready for a new tweet prompt', 'info');
+  };
+
+  const handlePromptSubmit = (query: string) => {
+    setUserQuery('');
+    handleGenerate(query);
   };
 
   const hasResult = Boolean(
     currentResponse &&
-      (currentResponse.tweet || currentResponse.input_blocked || currentResponse.output_blocked)
+      (currentResponse.tweet ||
+        currentResponse.input_blocked ||
+        currentResponse.output_blocked ||
+        currentResponse.status === 'NEEDS_CLARIFICATION')
   );
 
   return (
@@ -111,34 +126,52 @@ export function App() {
             <TypewriterHero hasResult={hasResult} isLoading={isLoading} />
 
             {hasResult || isLoading ? (
-              <div className="row g-4 mt-1">
-                <div className="col-12 col-xl-8">
-                  {/* Loading State */}
-                  {isLoading && (
-                    <div className="apple-card p-4 mb-4 text-center">
-                      <RefreshCw size={26} className="animate-spin-smooth text-primary mb-2" />
-                      <div className="fw-semibold" style={{ fontSize: '0.95rem' }}>
-                        Writer Agent drafting & Reflection Evaluator reviewing...
-                      </div>
-                      <div className="text-secondary" style={{ fontSize: '0.82rem' }}>
-                        Iterating through LangGraph self-correction cycle
-                      </div>
-                    </div>
+              <div className="row justify-content-center mt-1">
+                <div className="col-12 col-lg-10 col-xl-9">
+                  {/* User Question / Prompt Bubble */}
+                  {lastQuery && (
+                    <UserPromptBubble
+                      query={lastQuery}
+                      onReusePrompt={(q) => {
+                        setUserQuery(q);
+                        showToast('Loaded prompt into editor', 'info');
+                      }}
+                      onShowToast={(msg) => showToast(msg, 'info')}
+                    />
                   )}
 
+                  {/* Organic Background Ambient Loading State */}
+                  {isLoading && <AmbientLoading />}
+
+                  {/* Interactive Clarification Card (Missing Details) */}
+                  {!isLoading &&
+                    currentResponse &&
+                    currentResponse.status === 'NEEDS_CLARIFICATION' &&
+                    currentResponse.clarifications_needed &&
+                    currentResponse.clarifications_needed.length > 0 && (
+                      <ClarificationCard
+                        questions={currentResponse.clarifications_needed}
+                        reason={currentResponse.clarification_reason}
+                        onSubmitClarifications={handleClarificationsSubmit}
+                        onSkip={handleSkipClarifications}
+                        isLoading={isLoading}
+                      />
+                    )}
+
                   {/* Guardrail Blocked Alert */}
-                  {currentResponse && <GuardrailAlert response={currentResponse} />}
+                  {!isLoading && currentResponse && <GuardrailAlert response={currentResponse} />}
 
                   {/* Output Tweet Showcase */}
-                  {currentResponse && currentResponse.tweet && (
+                  {!isLoading && currentResponse && currentResponse.tweet && (
                     <TweetCard
                       response={currentResponse}
                       onShowToast={(msg) => showToast(msg, 'info')}
                     />
                   )}
 
-                  {/* LangGraph Iteration History */}
-                  {currentResponse &&
+                  {/* Editorial Iteration & Quality Audit */}
+                  {!isLoading &&
+                    currentResponse &&
                     currentResponse.attempt_history &&
                     currentResponse.attempt_history.length > 0 && (
                       <Timeline
@@ -146,13 +179,6 @@ export function App() {
                         reflectionEnabled={currentResponse.reflection_enabled}
                       />
                     )}
-                </div>
-
-                <div className="col-12 col-xl-4">
-                  <HowItWorksCard
-                    onSelectPrompt={handleSelectInspiration}
-                    disabled={isLoading}
-                  />
                 </div>
               </div>
             ) : (
@@ -172,7 +198,7 @@ export function App() {
         <PromptEditor
           query={userQuery}
           onQueryChange={setUserQuery}
-          onGenerate={handleGenerate}
+          onGenerate={handlePromptSubmit}
           isLoading={isLoading}
         />
       </div>
