@@ -130,6 +130,19 @@ def reflection_node(
         })
         return new_state  # type: ignore[return-value]
 
+    # Extract runtime threshold overrides if present
+    threshold_overrides = {}
+    for key in [
+        "relevance_threshold",
+        "clarity_threshold",
+        "professionalism_threshold",
+        "engagement_threshold",
+        "requirement_threshold",
+    ]:
+        val = state.get(key)  # type: ignore[misc]
+        if val is not None and isinstance(val, (int, float, str)):
+            threshold_overrides[key] = float(val)
+
     # Run Reflection Evaluator
     review_result = evaluate_tweet(
         user_query=user_query,
@@ -137,6 +150,7 @@ def reflection_node(
         attempt=attempt,
         settings=cfg,
         structured_model=structured_model,
+        threshold_overrides=threshold_overrides if threshold_overrides else None,
     )
 
     is_passed = review_result.decision == "PASS"

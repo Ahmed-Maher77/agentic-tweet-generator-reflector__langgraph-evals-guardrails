@@ -33,6 +33,11 @@ class TweetState(TypedDict, total=False):
     max_attempts: int
     reflection_enabled: bool
     search_enabled: bool
+    relevance_threshold: float
+    clarity_threshold: float
+    professionalism_threshold: float
+    engagement_threshold: float
+    requirement_threshold: float
 
     # Iteration & Writer State
     attempt: int

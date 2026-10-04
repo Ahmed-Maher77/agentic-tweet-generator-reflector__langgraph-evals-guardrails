@@ -17,29 +17,19 @@ class ReviewResult(BaseModel):
     )
 
     relevance: float = Field(
-        ge=0.0,
-        le=1.0,
-        description="How well the tweet addresses the user's topic and core subject (0.0 to 1.0).",
+        description="How well the tweet addresses the user's topic and core subject (Score from 0.0 to 1.0).",
     )
     clarity: float = Field(
-        ge=0.0,
-        le=1.0,
-        description="Readability, conciseness, and elimination of unnecessary fluff (0.0 to 1.0).",
+        description="Readability, conciseness, and elimination of unnecessary fluff (Score from 0.0 to 1.0).",
     )
     professionalism: float = Field(
-        ge=0.0,
-        le=1.0,
-        description="Appropriate tone, credibility, and absence of hyperbolic spam (0.0 to 1.0).",
+        description="Appropriate tone, credibility, and absence of hyperbolic spam (Score from 0.0 to 1.0).",
     )
     engagement: float = Field(
-        ge=0.0,
-        le=1.0,
-        description="Hook strength, natural conversational appeal, and CTA quality (0.0 to 1.0).",
+        description="Hook strength, natural conversational appeal, and CTA quality (Score from 0.0 to 1.0).",
     )
     requirement_adherence: float = Field(
-        ge=0.0,
-        le=1.0,
-        description="Adherence to explicit constraints: length, tone, hashtags, facts (0.0 to 1.0).",
+        description="Adherence to explicit constraints: length, tone, hashtags, facts (Score from 0.0 to 1.0).",
     )
 
     issues: list[str] = Field(
