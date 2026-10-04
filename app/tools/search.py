@@ -3,6 +3,7 @@
 from typing import Any
 
 from duckduckgo_search import DDGS
+from pydantic import SecretStr
 from tavily import TavilyClient
 
 from app.config import Settings, get_settings
@@ -71,11 +72,9 @@ def execute_web_search(
 
     # 1. Try Tavily if key is available
     raw_key = cfg.tavily_api_key
-    api_key_str: str | None = (
-        raw_key.get_secret_value()
-        if hasattr(raw_key, "get_secret_value")
-        else (str(raw_key) if raw_key is not None else None)
-    )
+    api_key_str: str | None = None
+    if raw_key is not None:
+        api_key_str = raw_key.get_secret_value() if isinstance(raw_key, SecretStr) else str(raw_key)
 
     if api_key_str:
         try:

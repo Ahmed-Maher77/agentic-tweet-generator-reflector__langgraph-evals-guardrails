@@ -1,6 +1,5 @@
 """DeepEval metrics and custom GEval rubrics for tweet generation and reflection."""
 
-import os
 from typing import Any
 
 from deepeval.metrics import (
@@ -23,7 +22,7 @@ class AppDeepEvalModel(DeepEvalBaseLLM):
     def __init__(self, model_name: str | None = None, *args: Any, **kwargs: Any) -> None:
         self._settings = get_settings()
         self._model_name = model_name or self._settings.judge_model
-        super().__init__(model=self._model_name, *args, **kwargs)
+        super().__init__(*args, model=self._model_name, **kwargs)
 
     def load_model(self, *args: Any, **kwargs: Any) -> Any:
         return get_chat_model(

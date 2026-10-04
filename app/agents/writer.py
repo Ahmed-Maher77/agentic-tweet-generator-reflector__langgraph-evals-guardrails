@@ -44,6 +44,24 @@ def search_web(query: str) -> str:
     return format_search_results_for_prompt(sanitized_results, engine)
 
 
+def extract_message_text(response: Any) -> str:
+    """Extract string text content from a BaseMessage or response object."""
+    content = getattr(response, "content", response)
+    if isinstance(content, str):
+        return content
+    if isinstance(content, list):
+        text_parts = []
+        for part in content:
+            if isinstance(part, str):
+                text_parts.append(part)
+            elif isinstance(part, dict) and "text" in part:
+                text_parts.append(str(part["text"]))
+            elif hasattr(part, "text"):
+                text_parts.append(str(part.text))
+        return "".join(text_parts)
+    return str(content) if content is not None else ""
+
+
 def clean_tweet_output(raw_text: str) -> str:
     """Clean the raw LLM output preserving valid Markdown formatting.
 
@@ -169,11 +187,7 @@ def run_writer_agent(
             )
             conversation_history.append(final_notice)
             response = model.invoke(conversation_history)
-            raw_output = (
-                response.content
-                if hasattr(response, "content") and isinstance(response.content, str)
-                else str(response)
-            )
+            raw_output = extract_message_text(response)
             break
 
         # Standard iterations (1 .. max_requests - 1): invoke with tool support
@@ -211,11 +225,7 @@ def run_writer_agent(
 
                 conversation_history.append(ToolMessage(content=observation, tool_call_id=call_id))
         else:
-            raw_output = (
-                response.content
-                if hasattr(response, "content") and isinstance(response.content, str)
-                else str(response)
-            )
+            raw_output = extract_message_text(response)
             break
 
     cleaned = clean_tweet_output(raw_output)

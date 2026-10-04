@@ -1,13 +1,33 @@
-"""Application configuration loaded from environment variables.
-
-Uses pydantic-settings for typed, validated configuration with env var support.
-All configuration is centralized here — no scattered os.getenv() calls.
-"""
-
+import os
 from typing import Self
 
+from dotenv import load_dotenv
 from pydantic import Field, SecretStr, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+# Pre-load .env into os.environ for LangChain/LangSmith and SDK auto-detection
+load_dotenv()
+
+# Synchronize LangSmith / LangChain environment variables bidirectionally
+_tracing = os.environ.get("LANGSMITH_TRACING") or os.environ.get("LANGCHAIN_TRACING_V2")
+if _tracing:
+    os.environ["LANGCHAIN_TRACING_V2"] = _tracing
+    os.environ["LANGSMITH_TRACING"] = _tracing
+
+_api_key = os.environ.get("LANGSMITH_API_KEY") or os.environ.get("LANGCHAIN_API_KEY")
+if _api_key:
+    os.environ["LANGCHAIN_API_KEY"] = _api_key
+    os.environ["LANGSMITH_API_KEY"] = _api_key
+
+_project = os.environ.get("LANGSMITH_PROJECT") or os.environ.get("LANGCHAIN_PROJECT")
+if _project:
+    os.environ["LANGCHAIN_PROJECT"] = _project
+    os.environ["LANGSMITH_PROJECT"] = _project
+
+_endpoint = os.environ.get("LANGSMITH_ENDPOINT") or os.environ.get("LANGCHAIN_ENDPOINT")
+if _endpoint:
+    os.environ["LANGCHAIN_ENDPOINT"] = _endpoint
+    os.environ["LANGSMITH_ENDPOINT"] = _endpoint
 
 
 class Settings(BaseSettings):
@@ -27,7 +47,7 @@ class Settings(BaseSettings):
     # --- LLM Configuration ---
     llm_provider: str = Field(
         default="auto",
-        description="LLM provider: 'openai', 'groq', or 'auto' (detects based on available key).",
+        description="LLM provider: 'openai', 'groq', 'cohere', or 'auto' (detects based on available key).",
     )
     openai_api_key: SecretStr | None = Field(
         default=None,
@@ -37,13 +57,17 @@ class Settings(BaseSettings):
         default=None,
         description="Groq API key. Never log or expose this value.",
     )
+    cohere_api_key: SecretStr | None = Field(
+        default=None,
+        description="Cohere API key for primary or fallback LLM inference.",
+    )
     tavily_api_key: SecretStr | None = Field(
         default=None,
         description="Tavily API key for web search grounding (optional, fallback to DuckDuckGo).",
     )
     openai_api_base: str | None = Field(
         default=None,
-        description="Custom base URL for OpenAI-compatible endpoint (defaults to https://api.groq.com/openai/v1 for Groq).",
+        description="Custom base URL for OpenAI-compatible endpoint.",
     )
     writer_model: str = Field(
         default="gpt-4o-mini",
@@ -83,7 +107,7 @@ class Settings(BaseSettings):
     # ================== Validate LLM provider, API keys, and set provider-specific defaults ===================
     @model_validator(mode="after")
     def validate_provider_and_keys(self) -> Self:
-        """Validate API keys by checking OpenAI first, then Groq, or raise if neither is available."""
+        """Validate API keys by checking OpenAI first, then Groq, then Cohere."""
         if self.openai_api_key:
             self.llm_provider = "openai"
         elif self.groq_api_key:
@@ -99,8 +123,23 @@ class Settings(BaseSettings):
                 self.safety_model = "openai/gpt-oss-20b"
             if self.judge_model == "gpt-4o-mini":
                 self.judge_model = "openai/gpt-oss-20b"
+        elif self.cohere_api_key:
+            self.llm_provider = "cohere"
+            if not self.openai_api_base or "groq" in self.openai_api_base:
+                self.openai_api_base = "https://api.cohere.com/compatibility/v1"
+            if self.writer_model in ("gpt-4o-mini", "openai/gpt-oss-20b", "openai/gpt-oss-120b"):
+                self.writer_model = "command-r-08-2024"
+            if self.reviewer_model in ("gpt-4o-mini", "openai/gpt-oss-20b", "openai/gpt-oss-120b"):
+                self.reviewer_model = "command-r-08-2024"
+            if self.safety_model in ("gpt-4o-mini", "openai/gpt-oss-20b", "openai/gpt-oss-120b"):
+                self.safety_model = "command-r-08-2024"
+            if self.judge_model in ("gpt-4o-mini", "openai/gpt-oss-20b", "openai/gpt-oss-120b"):
+                self.judge_model = "command-r-08-2024"
         else:
-            raise ValueError("Neither OPENAI_API_KEY nor GROQ_API_KEY is available. Please provide at least one valid API key.")
+            raise ValueError(
+                "None of OPENAI_API_KEY, GROQ_API_KEY, or COHERE_API_KEY is available. "
+                "Please provide at least one valid API key."
+            )
 
         return self
 
@@ -111,6 +150,8 @@ class Settings(BaseSettings):
             return self.openai_api_key
         if self.groq_api_key:
             return self.groq_api_key
+        if self.cohere_api_key:
+            return self.cohere_api_key
         raise ValueError("No valid API key configured.")
 
     @property
@@ -120,6 +161,8 @@ class Settings(BaseSettings):
             return self.openai_api_base
         if self.llm_provider == "groq":
             return "https://api.groq.com/openai/v1"
+        if self.llm_provider == "cohere":
+            return "https://api.cohere.com/compatibility/v1"
         return None
 
     # --- Workflow Configuration ---
