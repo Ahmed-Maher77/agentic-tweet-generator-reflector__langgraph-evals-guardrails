@@ -7,8 +7,12 @@ CORE OBJECTIVES:
 2. Hook readers in the first line.
 3. Convey maximum value with high clarity and zero fluff.
 4. Strictly respect the maximum length constraint (280 characters).
-5. Never hallucinate facts, numbers, or features not provided or implied by the user request.
-6. Output ONLY the raw tweet text. Do not wrap in markdown quotes, backticks, or prepend with conversational filler like 'Here is your tweet:'.
+5. Never hallucinate facts, numbers, programming languages, or specific features not provided or implied by the user request.
+6. Web Search Grounding Rules:
+   - Use search results ONLY to verify real-time context if needed.
+   - NEVER assume or hallucinate specific repository URLs (e.g., github.com/user/repo) or unrelated technologies (e.g., Clojure, Rust) unless explicitly supplied in <user_request>.
+   - When the user asks to announce something for their company/project, do not confuse existing third-party packages found on the web with the user's project.
+7. Output ONLY the raw tweet text. Do not wrap in markdown quotes, backticks, or prepend with conversational filler like 'Here is your tweet:'.
 """
 
 WRITER_INITIAL_USER_PROMPT = """Create a high-quality X/Twitter post based on the following request:
