@@ -7,7 +7,7 @@
 [![Hugging Face](https://img.shields.io/badge/NLP%20Eval-Hugging%20Face-yellow.svg)](https://huggingface.co/docs/evaluate/index)
 [![FastAPI](https://img.shields.io/badge/API-FastAPI-green.svg)](https://fastapi.tiangolo.com/)
 [![React](https://img.shields.io/badge/Frontend-React%20%2B%20Vite%20%2B%20TS-blue.svg)](https://vitejs.dev/)
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect%20%2F%20Post-0A66C2.svg?logo=linkedin&logoColor=white)]()
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect%20%2F%20Post-0A66C2.svg?logo=linkedin&logoColor=white)](https://www.linkedin.com/posts/ahmed-maher-algohary_ai-agenticai-aiagents-ugcPost-7514720545767260160-38NL/)
 [![Demo Video](https://img.shields.io/badge/Demo%20Video-Watch%20Walkthrough-FF0000.svg?logo=youtube&logoColor=white)](https://drive.google.com/file/d/1W5b7_8em4_AmtY9EjspGPbVsTO1qK53_/view?usp=sharing)
 
 A production-grade, stateful AI system that generates high-quality, authentic X/Twitter posts from user prompts and iteratively refines them through an **LLM-based reflection/review loop** orchestrated with **LangGraph**, real-time **Web Search Grounding** (Tavily + DuckDuckGo fallback), 3-tier **Safety & Tool Guardrails**, and an enterprise-grade **Multi-Framework AI Evaluation Suite** (**DeepEval** + **Ragas** + **Hugging Face Evaluate**).
@@ -17,7 +17,7 @@ A production-grade, stateful AI system that generates high-quality, authentic X/
 ## 🎬 Video Walkthrough
 
 - **Watch Demo Video (Walkthrough):** [**watch the demo video on drive 🔗**](https://drive.google.com/file/d/1W5b7_8em4_AmtY9EjspGPbVsTO1qK53_/view?usp=sharing)
-- **See on LinkedIn:** []()
+- **See on LinkedIn:** [**see the linkedin post 🌐**](https://www.linkedin.com/posts/ahmed-maher-algohary_ai-agenticai-aiagents-ugcPost-7514720545767260160-38NL/)
 
 
 
